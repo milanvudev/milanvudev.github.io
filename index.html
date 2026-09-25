@@ -27,12 +27,6 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html {
-      scroll-behavior: smooth;
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
-
     body {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", sans-serif;
@@ -87,8 +81,6 @@
       height: 36px;
       background: rgba(255,255,255,.65);
       border-radius: 999px;
-      animation: floatCloud var(--dur, 18s) linear infinite;
-      will-change: transform;
       z-index: 0;
     }
 
@@ -104,15 +96,9 @@
     .cloud::before { width: 46px; height: 46px; left: 18px; }
     .cloud::after { width: 62px; height: 62px; left: 52px; }
 
-    .cloud-1 { top: 120px; left: -160px; --dur: 18s; }
-    .cloud-2 { top: 270px; right: -190px; --dur: 24s; --s: .8; }
-    .cloud-3 { top: 470px; left: -180px; --dur: 28s; --s: .55; }
-
-    @keyframes floatCloud {
-      from { transform: scale(var(--s, 1)) translate3d(0, 0, 0); }
-      50% { transform: scale(var(--s, 1)) translate3d(85px, 8px, 0); }
-      to { transform: scale(var(--s, 1)) translate3d(170px, 0, 0); }
-    }
+    .cloud-1 { top: 120px; left: -160px; }
+    .cloud-2 { top: 270px; right: -190px; transform: scale(.8); }
+    .cloud-3 { top: 470px; left: -180px; transform: scale(.55); }
 
     nav {
       position: sticky;
@@ -128,12 +114,9 @@
       gap: 14px;
       padding: 12px 15px;
       border-radius: 18px;
-      background: rgba(255,255,255,.74);
+      background: rgba(255,255,255,.94);
       border: 1px solid rgba(255,255,255,.7);
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
       box-shadow: var(--shadow);
-      contain: layout paint;
     }
 
     .brand {
@@ -155,14 +138,12 @@
       color: var(--muted);
       border-radius: 11px;
       font-size: .86rem;
-      transition: .2s ease;
     }
 
     @media (hover: hover) {
       .nav-links a:hover {
         background: #fff;
         color: var(--brown-dark);
-        transform: translateY(-1px);
       }
     }
 
@@ -179,20 +160,16 @@
     }
 
     .card {
-      content-visibility: auto;
-      contain-intrinsic-size: auto 320px;
       background: var(--white);
       border: 1px solid rgba(255,255,255,.72);
       border-radius: 28px;
       box-shadow: var(--shadow);
-      contain: layout paint;
     }
 
     .hero-main {
       padding: 38px;
       position: relative;
       overflow: hidden;
-      animation: fadeInUp .7s ease-out both;
     }
 
     .eyebrow {
@@ -247,20 +224,16 @@
       background: #fff;
       border: 1px solid var(--line);
       box-shadow: 0 7px 18px rgba(96, 65, 44, .07);
-      transition: transform .2s ease, box-shadow .2s ease;
       touch-action: manipulation;
     }
 
     @media (hover: hover) {
       .btn:hover {
-        transform: translateY(-3px);
         box-shadow: 0 11px 23px rgba(96, 65, 44, .12);
       }
     }
 
-    .btn:active {
-      transform: scale(.96);
-    }
+    .btn:active { transform: scale(.96); }
 
     .btn.primary {
       color: #fff;
@@ -320,7 +293,6 @@
       padding: 25px;
       overflow: hidden;
       background: linear-gradient(180deg, rgba(255,255,255,.83), rgba(255,248,223,.86));
-      animation: fadeInUp .7s ease-out .12s both;
     }
 
     .capy-card::before {
@@ -359,20 +331,6 @@
       box-shadow: 0 0 0 15px rgba(255,217,121,.15);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     .capy-caption {
       position: relative;
       z-index: 4;
@@ -390,18 +348,9 @@
       font-size: .9rem;
     }
 
-
-
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     section {
       padding: 30px 0;
-      content-visibility: auto;
-      contain-intrinsic-size: auto 420px;
+      scroll-margin-top: 84px;
     }
 
     .section-head {
@@ -432,16 +381,10 @@
       gap: 13px;
     }
 
-    .info {
-      padding: 23px;
-      transition: .22s ease;
-    }
+    .info { padding: 23px; }
 
     @media (hover: hover) {
-      .info:hover {
-        transform: translateY(-4px);
-        background: rgba(255,255,255,.94);
-      }
+      .info:hover { background: rgba(255,255,255,.94); }
     }
 
     .emoji {
@@ -490,6 +433,49 @@
     .pill:nth-child(3n+2) { background: #e9fbef; }
     .pill:nth-child(3n) { background: #e8f7ff; }
 
+    /* ===== Capybara gang ===== */
+    .gang {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 13px;
+    }
+
+    .gang-card {
+      padding: 18px 12px 16px;
+      text-align: center;
+    }
+
+    .gang-card svg {
+      width: min(100%, 140px);
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .gang-card figcaption {
+      margin-top: 10px;
+      line-height: 1.45;
+    }
+
+    .gang-card strong {
+      display: block;
+      color: var(--brown-dark);
+      font-size: .95rem;
+      margin-bottom: 2px;
+    }
+
+    .gang-card span {
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .footer-capys {
+      width: min(220px, 55%);
+      height: auto;
+      display: block;
+      margin: 0 auto 12px;
+    }
+
     .socials {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -508,20 +494,14 @@
       gap: 8px;
       font-size: .88rem;
       font-weight: 800;
-      transition: transform .2s ease, background .2s ease;
       touch-action: manipulation;
     }
 
     @media (hover: hover) {
-      .social:hover {
-        transform: translateY(-4px);
-        background: #fff;
-      }
+      .social:hover { background: #fff; }
     }
 
-    .social:active {
-      transform: scale(.96);
-    }
+    .social:active { transform: scale(.96); }
 
     .social.github { color: #3f3c39; }
     .social.telegram { color: #2187b9; }
@@ -565,24 +545,32 @@
       .buttons .btn { flex: 1 1 100%; }
       .capy-wrap { min-height: 240px; }
     }
-
-    body.anim-paused .cloud {
-      animation-play-state: paused !important;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .001ms !important;
-        scroll-behavior: auto !important;
-      }
-    }
   </style>
-<base target="_blank">
 </head>
 
 <body>
+  <!-- Kho linh kiện capy dùng chung (tĩnh, không animation) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="capy-base">
+        <circle cx="-34" cy="-26" r="11" fill="#9b603c"/>
+        <circle cx="34" cy="-26" r="11" fill="#9b603c"/>
+        <rect x="-46" y="-36" width="92" height="76" rx="36" fill="#bd7a4c"/>
+        <ellipse cx="0" cy="16" rx="24" ry="15" fill="#a96a45"/>
+        <ellipse cx="-8" cy="12" rx="4" ry="2.8" fill="#2f2018"/>
+        <ellipse cx="8" cy="12" rx="4" ry="2.8" fill="#2f2018"/>
+      </g>
+      <g id="capy-face">
+        <use href="#capy-base"/>
+        <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
+        <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
+        <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </g>
+    </defs>
+  </svg>
+
   <div class="cloud cloud-1"></div>
   <div class="cloud cloud-2"></div>
   <div class="cloud cloud-3"></div>
@@ -594,6 +582,7 @@
         <div class="nav-links">
           <a href="#about">About</a>
           <a href="#interests">Interests</a>
+          <a href="#gang">Capy Gang</a>
           <a href="#skills">Skills</a>
           <a href="#socials">Socials</a>
         </div>
@@ -646,7 +635,7 @@ MilanVu
         <div class="capy-wrap">
           <div class="sun"></div>
 
-          <svg class="capy-img" viewBox="0 0 460 300" role="img" aria-label="Đàn capybara đội nón, đeo balo rùa và giữ thăng bằng quả cam trên đầu">
+          <svg class="capy-img" viewBox="0 0 460 300" role="img" aria-label="Đàn capybara gồm nhiều thành viên: đội nón rơm, đeo balo rùa, đội quả cam, nón tiệc và một capy con đang nằm nghỉ">
             <!-- bóng đổ -->
             <ellipse cx="100" cy="258" rx="62" ry="10" fill="#6b4a35" opacity=".10"/>
             <ellipse cx="252" cy="282" rx="70" ry="11" fill="#6b4a35" opacity=".10"/>
@@ -707,7 +696,17 @@ MilanVu
               <path d="M272 116 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z" fill="#ffd979" opacity=".8"/>
             </g>
 
-            <!-- CAPY CON: nón tiệc mini -->
+            <!-- CAPY CON: đang nằm nghỉ -->
+            <g>
+              <ellipse cx="196" cy="262" rx="24" ry="13" fill="#c07e50"/>
+              <circle cx="176" cy="248" r="4.5" fill="#9b603c"/>
+              <ellipse cx="181" cy="251" rx="14" ry="11" fill="#c58457"/>
+              <circle cx="185" cy="254" r="2.2" fill="#3d291e"/>
+              <ellipse cx="190" cy="258" rx="4.5" ry="3" fill="#a96a45"/>
+              <ellipse cx="191.5" cy="256.8" rx="1.5" ry="1" fill="#2f2018"/>
+            </g>
+
+            <!-- CAPY NHỎ: nón tiệc mini -->
             <g>
               <ellipse cx="368" cy="238" rx="15" ry="11" fill="#6faf5f"/>
               <ellipse cx="368" cy="238" rx="15" ry="11" fill="none" stroke="#4e8a4a" stroke-width="2.5"/>
@@ -805,6 +804,109 @@ MilanVu
       </div>
     </section>
 
+    <section id="gang">
+      <div class="section-head">
+        <h2>The capybara gang</h2>
+        <p>My little team — they supervise everything I build. 🐹</p>
+      </div>
+
+      <div class="gang">
+        <figure class="card gang-card">
+          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara coder với laptop">
+            <use href="#capy-base"/>
+            <path d="M-28 -12 q7 6 14 0 M14 -12 q7 6 14 0" stroke="#3d291e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <rect x="-34" y="6" width="68" height="30" rx="5" fill="#5c402f"/>
+            <rect x="-28" y="12" width="56" height="18" rx="3" fill="#20301d"/>
+            <path d="M-20 17 h16 M-20 23 h26 M-20 27 h12" stroke="#7ee08a" stroke-width="3" stroke-linecap="round"/>
+            <rect x="-44" y="35" width="88" height="9" rx="4" fill="#8e654b"/>
+          </svg>
+          <figcaption><strong>Coder Capy</strong><span>always debugging something 💻</span></figcaption>
+        </figure>
+
+        <figure class="card gang-card">
+          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara bảo mật đeo kính đen và khiên">
+            <use href="#capy-base"/>
+            <rect x="-42" y="-22" width="36" height="22" rx="9" fill="#2f2018"/>
+            <rect x="6" y="-22" width="36" height="22" rx="9" fill="#2f2018"/>
+            <rect x="-8" y="-15" width="16" height="5" fill="#2f2018"/>
+            <path d="M-42 -12 L-54 -17 M42 -12 L54 -17" stroke="#2f2018" stroke-width="4" stroke-linecap="round"/>
+            <path d="M-10 25 q10 7 20 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M0 34 l17 6 v13 q0 10 -17 13 q-17 -3 -17 -13 v-13 Z" fill="#58a870" stroke="#4e8a4a" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M-8 52 l6 6 11 -11" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <figcaption><strong>Shield Capy</strong><span>keeps the burrow safe 🛡️</span></figcaption>
+        </figure>
+
+        <figure class="card gang-card">
+          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara đội quả cam trên đầu">
+            <use href="#capy-base"/>
+            <circle cx="0" cy="-42" r="15" fill="#ffa04d"/>
+            <circle cx="-5" cy="-47" r="4" fill="#ffd8ad" opacity=".85"/>
+            <ellipse cx="11" cy="-55" rx="7" ry="3.2" fill="#65ac62" transform="rotate(-20 11 -55)"/>
+            <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
+            <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
+            <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
+            <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
+            <ellipse cx="-33" cy="4" rx="7" ry="4" fill="#ff9fba" opacity=".4"/>
+            <ellipse cx="33" cy="4" rx="7" ry="4" fill="#ff9fba" opacity=".4"/>
+            <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <figcaption><strong>Orange Capy</strong><span>snack time, always 🍊</span></figcaption>
+        </figure>
+
+        <figure class="card gang-card">
+          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara DJ đeo tai nghe đang hát">
+            <use href="#capy-base"/>
+            <path d="M-48 -20 Q-48 -56 0 -56 Q48 -56 48 -20" stroke="#5c402f" stroke-width="9" fill="none"/>
+            <rect x="-58" y="-26" width="20" height="32" rx="9" fill="#5c402f"/>
+            <rect x="38" y="-26" width="20" height="32" rx="9" fill="#5c402f"/>
+            <rect x="-54" y="-21" width="12" height="22" rx="6" fill="#8e654b"/>
+            <rect x="42" y="-21" width="12" height="22" rx="6" fill="#8e654b"/>
+            <path d="M-28 -8 q7 7 14 0 M14 -8 q7 7 14 0" stroke="#3d291e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="0" cy="24" rx="9" ry="8" fill="#5c2f22"/>
+            <ellipse cx="0" cy="27" rx="5" ry="3.5" fill="#ff8ea8"/>
+            <path d="M40 -34 V-52 M40 -52 q8 2 10 -6" stroke="#e88c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="36.5" cy="-34" rx="5" ry="3.8" fill="#e88c3e"/>
+            <path d="M-44 -40 V-54 M-44 -54 q7 2 9 -5" stroke="#e88c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="-47.5" cy="-40" rx="4.5" ry="3.4" fill="#e88c3e"/>
+          </svg>
+          <figcaption><strong>DJ Capy</strong><span>lo-fi beats to chill to 🎵</span></figcaption>
+        </figure>
+
+        <figure class="card gang-card">
+          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara đang ngâm mình trong bồn tắm gỗ với lát cam">
+            <use href="#capy-base"/>
+            <path d="M-28 -8 q7 6 14 0 M14 -8 q7 6 14 0" stroke="#3d291e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <path d="M-9 20 q9 6 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="-30" cy="-50" r="6" fill="#fff" opacity=".5"/>
+            <circle cx="-16" cy="-58" r="4" fill="#fff" opacity=".5"/>
+            <circle cx="26" cy="-54" r="5" fill="#fff" opacity=".5"/>
+            <rect x="-46" y="36" width="92" height="30" rx="10" fill="#b87548"/>
+            <path d="M-23 40 v22 M0 40 v22 M23 40 v22" stroke="#a26542" stroke-width="3"/>
+            <rect x="-52" y="26" width="104" height="12" rx="6" fill="#a26542"/>
+            <circle cx="40" cy="22" r="9" fill="#ffa04d"/>
+            <path d="M40 14 v16 M32 22 h16" stroke="#fff8df" stroke-width="2"/>
+          </svg>
+          <figcaption><strong>Tub Capy</strong><span>professional relaxer ♨️</span></figcaption>
+        </figure>
+
+        <figure class="card gang-card">
+          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara thám hiểm đội nón rơm">
+            <use href="#capy-base"/>
+            <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
+            <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
+            <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
+            <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
+            <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="0" cy="-34" rx="48" ry="10" fill="#e3bd6d"/>
+            <path d="M-26 -34 Q0 -62 26 -34 Z" fill="#f0d28a"/>
+            <path d="M-19 -38 Q0 -47 19 -38" stroke="#c96f4a" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <figcaption><strong>Scout Capy</strong><span>exploring the backyard 🧭</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section id="skills">
       <div class="section-head">
         <h2>Core interests</h2>
@@ -842,24 +944,22 @@ MilanVu
 
   <footer>
     <div class="container">
+      <svg class="footer-capys" viewBox="0 0 260 74" aria-hidden="true">
+        <g transform="translate(45 38) scale(.85)">
+          <use href="#capy-face"/>
+        </g>
+        <g transform="translate(130 38) scale(.85)">
+          <use href="#capy-base"/>
+          <path d="M-28 -8 q7 7 14 0 M14 -8 q7 7 14 0" stroke="#3d291e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="0" cy="24" rx="8" ry="7" fill="#5c2f22"/>
+        </g>
+        <g transform="translate(215 38) scale(.85)">
+          <use href="#capy-face"/>
+        </g>
+      </svg>
       <span class="capy-mini">🐹</span>
       Built with curiosity by <strong>MilanVu</strong> • Vietnam 🇻🇳
     </div>
   </footer>
-<script>
-    (function () {
-      var paused = false;
-      function update() {
-        document.body.classList.toggle('anim-paused', paused || document.hidden);
-      }
-      if ('IntersectionObserver' in window) {
-        new IntersectionObserver(function (entries) {
-          paused = !entries[0].isIntersecting;
-          update();
-        }, { threshold: 0 }).observe(document.querySelector('header'));
-      }
-      document.addEventListener('visibilitychange', update);
-    })();
-  </script>
 </body>
 </html>
