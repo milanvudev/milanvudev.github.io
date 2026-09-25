@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MilanVu — Vietnamese coder and cybersecurity enthusiast." />
+  <title>MilanVu — Capybara Corner 🐹</title>
+
+  <style>
+    :root {
+      --cream: #fff8df;
+      --cream-2: #fff2c5;
+      --sky: #a9e7ff;
+      --sky-2: #dff7ff;
+      --mint: #bff4c8;
+      --green: #77c88a;
+      --orange: #ffb765;
+      --brown: #8e654b;
+      --brown-dark: #5c402f;
+      --pink: #ff9fba;
+      --white: rgba(255,255,255,.82);
+      --line: rgba(95, 64, 47, .12);
+      --shadow: 0 10px 28px rgba(112, 78, 52, .10);
+      --text: #523c2d;
+      --muted: #7e6758;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,.88) 0 90px, transparent 91px),
+        radial-gradient(circle at 80% 12%, rgba(255,255,255,.76) 0 70px, transparent 71px),
+        linear-gradient(180deg, var(--sky) 0%, var(--sky-2) 42%, #effbdc 72%, var(--mint) 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -2;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    body::before {
+      width: 360px;
+      height: 360px;
+      right: -130px;
+      top: 130px;
+      background: rgba(255,255,255,.22);
+    }
+
+    body::after {
+      width: 300px;
+      height: 300px;
+      left: -120px;
+      bottom: 70px;
+      background: rgba(255, 183, 101, .12);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container {
+      width: min(1080px, calc(100% - 34px));
+      margin: 0 auto;
+    }
+
+    .cloud {
+      position: absolute;
+      width: 120px;
+      height: 36px;
+      background: rgba(255,255,255,.65);
+      border-radius: 999px;
+      animation: floatCloud var(--dur, 18s) linear infinite;
+      will-change: transform;
+      z-index: 0;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      background: inherit;
+      border-radius: 50%;
+    }
+
+    .cloud::before { width: 46px; height: 46px; left: 18px; }
+    .cloud::after { width: 62px; height: 62px; left: 52px; }
+
+    .cloud-1 { top: 120px; left: -160px; --dur: 18s; }
+    .cloud-2 { top: 270px; right: -190px; --dur: 24s; --s: .8; }
+    .cloud-3 { top: 470px; left: -180px; --dur: 28s; --s: .55; }
+
+    @keyframes floatCloud {
+      from { transform: scale(var(--s, 1)) translate3d(0, 0, 0); }
+      50% { transform: scale(var(--s, 1)) translate3d(85px, 8px, 0); }
+      to { transform: scale(var(--s, 1)) translate3d(170px, 0, 0); }
+    }
+
+    nav {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      padding-top: 12px;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(255,255,255,.7);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      contain: layout paint;
+    }
+
+    .brand {
+      font-weight: 900;
+      letter-spacing: .2px;
+      color: var(--brown-dark);
+    }
+
+    .brand span { color: #e69745; }
+
+    .nav-links {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      padding: 8px 10px;
+      color: var(--muted);
+      border-radius: 11px;
+      font-size: .86rem;
+      transition: .2s ease;
+    }
+
+    @media (hover: hover) {
+      .nav-links a:hover {
+        background: #fff;
+        color: var(--brown-dark);
+        transform: translateY(-1px);
+      }
+    }
+
+    header {
+      position: relative;
+      padding: 72px 0 36px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.14fr .86fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .card {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 320px;
+      background: var(--white);
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      contain: layout paint;
+    }
+
+    .hero-main {
+      padding: 38px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp .7s ease-out both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #fff4d3;
+      color: #9d6a35;
+      border: 1px solid #f7d89e;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(3.25rem, 8vw, 6rem);
+      line-height: .9;
+      letter-spacing: -4px;
+      color: var(--brown-dark);
+      margin-bottom: 18px;
+    }
+
+    h1 .orange { color: #e88c3e; }
+
+    .lead {
+      max-width: 690px;
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.03rem;
+    }
+
+    .lead strong { color: var(--brown-dark); }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: .88rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 7px 18px rgba(96, 65, 44, .07);
+      transition: transform .2s ease, box-shadow .2s ease;
+      touch-action: manipulation;
+    }
+
+    @media (hover: hover) {
+      .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 11px 23px rgba(96, 65, 44, .12);
+      }
+    }
+
+    .btn:active {
+      transform: scale(.96);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(135deg, #eea24f, #f6c06c);
+      border-color: transparent;
+    }
+
+    .terminal {
+      margin-top: 25px;
+      border-radius: 17px;
+      overflow: hidden;
+      background: #fffdf5;
+      border: 1px solid #eadfca;
+    }
+
+    .terminal-bar {
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-bottom: 1px solid #eee3d0;
+      background: #fff8e8;
+    }
+
+    .terminal-bar i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: block;
+      background: #dfbe86;
+    }
+
+    .terminal-bar span {
+      margin-left: 4px;
+      color: #a58e78;
+      font: .72rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .terminal pre {
+      margin: 0;
+      padding: 15px 16px;
+      white-space: pre-wrap;
+      color: #745947;
+      font: .81rem/1.8 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .cmd { color: #df873a; }
+    .ok { color: #58a870; }
+    .key { color: #6b98bb; }
+
+    .capy-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+      padding: 25px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.83), rgba(255,248,223,.86));
+      animation: fadeInUp .7s ease-out .12s both;
+    }
+
+    .capy-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -45px -80px -45px;
+      height: 190px;
+      background: #a9dc86;
+      border-radius: 50% 50% 0 0;
+    }
+
+    .capy-wrap {
+      position: relative;
+      min-height: 280px;
+      display: grid;
+      place-items: center;
+    }
+
+    .capy-img {
+      width: min(100%, 380px);
+      height: auto;
+      display: block;
+      margin-top: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .sun {
+      position: absolute;
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      right: 24px;
+      top: 6px;
+      background: #ffd979;
+      box-shadow: 0 0 0 15px rgba(255,217,121,.15);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .capy-caption {
+      position: relative;
+      z-index: 4;
+      text-align: center;
+    }
+
+    .capy-caption h2 {
+      font-size: 1.8rem;
+      color: var(--brown-dark);
+      margin-bottom: 6px;
+    }
+
+    .capy-caption p {
+      color: #8c6d58;
+      font-size: .9rem;
+    }
+
+
+
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    section {
+      padding: 30px 0;
+      content-visibility: auto;
+      contain-intrinsic-size: auto 420px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 15px;
+    }
+
+    .section-head h2 {
+      font-size: 1.7rem;
+      color: var(--brown-dark);
+      letter-spacing: -.8px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      text-align: right;
+      max-width: 560px;
+      line-height: 1.6;
+      font-size: .9rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 13px;
+    }
+
+    .info {
+      padding: 23px;
+      transition: .22s ease;
+    }
+
+    @media (hover: hover) {
+      .info:hover {
+        transform: translateY(-4px);
+        background: rgba(255,255,255,.94);
+      }
+    }
+
+    .emoji {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+
+    .info h3 {
+      color: var(--brown-dark);
+      font-size: 1.04rem;
+      margin-bottom: 8px;
+    }
+
+    .info p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: .9rem;
+    }
+
+    .about {
+      padding: 26px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .about strong { color: var(--brown-dark); }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 23px;
+    }
+
+    .pill {
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: .83rem;
+      font-weight: 750;
+      border: 1px solid var(--line);
+      background: #fffdf5;
+      color: #715848;
+    }
+
+    .pill:nth-child(3n+1) { background: #fff2d7; }
+    .pill:nth-child(3n+2) { background: #e9fbef; }
+    .pill:nth-child(3n) { background: #e8f7ff; }
+
+    .socials {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 11px;
+    }
+
+    .social {
+      padding: 18px 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.79);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: .88rem;
+      font-weight: 800;
+      transition: transform .2s ease, background .2s ease;
+      touch-action: manipulation;
+    }
+
+    @media (hover: hover) {
+      .social:hover {
+        transform: translateY(-4px);
+        background: #fff;
+      }
+    }
+
+    .social:active {
+      transform: scale(.96);
+    }
+
+    .social.github { color: #3f3c39; }
+    .social.telegram { color: #2187b9; }
+    .social.telegram-group { color: #2187b9; }
+    .social.tiktok { color: #242424; }
+    .social.facebook { color: #2f6bc2; }
+
+    footer {
+      padding: 55px 0 70px;
+      text-align: center;
+      color: #70866d;
+      font-size: .84rem;
+    }
+
+    footer .capy-mini {
+      font-size: 1.35rem;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+      .section-head p { text-align: left; }
+    }
+
+    @media (max-width: 600px) {
+      .container { width: min(100% - 20px, 1080px); }
+      .nav-links { display: none; }
+      header { padding-top: 42px; }
+      .hero-main, .capy-card, .info, .about { padding: 21px; }
+      h1 { font-size: clamp(3rem, 18vw, 4.4rem); letter-spacing: -3px; }
+      .buttons .btn { flex: 1 1 45%; }
+    }
+
+    @media (max-width: 400px) {
+      .buttons .btn { flex: 1 1 100%; }
+      .capy-wrap { min-height: 240px; }
+    }
+
+    body.anim-paused .cloud {
+      animation-play-state: paused !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <div class="brand">Milan<span>Vu</span> 🐹</div>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#interests">Interests</a>
+          <a href="#skills">Skills</a>
+          <a href="#socials">Socials</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div class="container hero">
+      <div class="card hero-main">
+        <div class="eyebrow">🌿 Welcome to my little corner of the internet</div>
+
+        <h1>Hi, I'm <span class="orange">MilanVu.</span></h1>
+
+        <p class="lead">
+          I'm <strong>Nhật Minh</strong>, also known online as
+          <strong>MilanVu</strong>. I'm from Vietnam 🇻🇳 and I'm interested in
+          <strong>cybersecurity</strong>, <strong>coding</strong>, and exploring
+          how technology works.
+        </p>
+
+        <div class="buttons">
+          <a class="btn primary" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
+          <a class="btn" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
+          <a class="btn" href="https://t.me/denrindzwp" target="_blank" rel="noopener">💬 Telegram Group</a>
+          <a class="btn" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
+          <a class="btn" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
+        </div>
+
+        <div class="terminal">
+          <div class="terminal-bar">
+            <i></i><i></i><i></i>
+            <span>milanvu@capybara: ~/profile</span>
+          </div>
+          <pre><span class="cmd">$ whoami</span>
+MilanVu
+
+<span class="cmd">$ cat identity.txt</span>
+<span class="key">Name</span>        : Nhật Minh
+<span class="key">Nickname</span>    : MilanVu
+<span class="key">Nationality</span> : Vietnamese 🇻🇳
+<span class="key">Born</span>        : 2012
+
+<span class="cmd">$ focus</span>
+<span class="ok">Cybersecurity</span> + <span class="ok">Coding</span> + Curiosity 🐹</pre>
+        </div>
+      </div>
+
+      <aside class="card capy-card">
+        <div class="capy-wrap">
+          <div class="sun"></div>
+
+          <svg class="capy-img" viewBox="0 0 460 300" role="img" aria-label="Đàn capybara đội nón, đeo balo rùa và giữ thăng bằng quả cam trên đầu">
+            <!-- bóng đổ -->
+            <ellipse cx="100" cy="258" rx="62" ry="10" fill="#6b4a35" opacity=".10"/>
+            <ellipse cx="252" cy="282" rx="70" ry="11" fill="#6b4a35" opacity=".10"/>
+            <ellipse cx="388" cy="280" rx="40" ry="7" fill="#6b4a35" opacity=".10"/>
+
+            <!-- CAPY TRÁI: nón rơm + balo rùa -->
+            <g>
+              <ellipse cx="78" cy="168" rx="36" ry="27" fill="#6faf5f"/>
+              <ellipse cx="78" cy="168" rx="36" ry="27" fill="none" stroke="#4e8a4a" stroke-width="4"/>
+              <ellipse cx="78" cy="168" rx="28" ry="19" fill="#8cc47a"/>
+              <polygon points="78,154 90,161 90,175 78,182 66,175 66,161" fill="none" stroke="#4e8a4a" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M108 166 Q122 188 118 214" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
+              <ellipse cx="96" cy="212" rx="55" ry="33" fill="#b87548"/>
+              <ellipse cx="99" cy="224" rx="45" ry="18" fill="#a26542" opacity=".55"/>
+              <rect x="64" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
+              <rect x="93" y="233" width="15" height="24" rx="7.5" fill="#a26542"/>
+              <rect x="121" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
+              <ellipse cx="156" cy="184" rx="30" ry="26" fill="#bd7a4c"/>
+              <circle cx="140" cy="160" r="6.5" fill="#9b603c"/>
+              <circle cx="170" cy="160" r="6.5" fill="#9b603c"/>
+              <circle cx="164" cy="180" r="3.4" fill="#3d291e"/>
+              <circle cx="165.3" cy="178.8" r="1.1" fill="#fff"/>
+              <ellipse cx="179" cy="194" rx="13" ry="10.5" fill="#a96a45"/>
+              <ellipse cx="184" cy="190.5" rx="3.6" ry="2.4" fill="#2f2018"/>
+              <ellipse cx="154" cy="156" rx="29" ry="8" fill="#e3bd6d"/>
+              <path d="M137 156 Q154 118 171 156 Z" fill="#f0d28a"/>
+              <path d="M141 149 Q154 141 167 149" fill="none" stroke="#c96f4a" stroke-width="5" stroke-linecap="round"/>
+            </g>
+
+            <!-- CAPY GIỮA: to nhất, quả cam trên đầu + balo rùa -->
+            <g>
+              <ellipse cx="234" cy="184" rx="40" ry="30" fill="#5f9e57"/>
+              <ellipse cx="234" cy="184" rx="40" ry="30" fill="none" stroke="#447a41" stroke-width="4"/>
+              <ellipse cx="234" cy="184" rx="31" ry="21" fill="#7fb96e"/>
+              <polygon points="234,169 247,176 247,191 234,198 221,191 221,176" fill="none" stroke="#447a41" stroke-width="2.5" stroke-linejoin="round"/>
+              <circle cx="215" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
+              <circle cx="253" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
+              <path d="M266 176 Q280 198 276 226" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
+              <ellipse cx="250" cy="232" rx="58" ry="37" fill="#b87548"/>
+              <ellipse cx="253" cy="246" rx="49" ry="20" fill="#a26542" opacity=".55"/>
+              <rect x="214" y="252" width="16" height="26" rx="8" fill="#a26542"/>
+              <rect x="246" y="255" width="16" height="26" rx="8" fill="#a26542"/>
+              <rect x="278" y="252" width="16" height="26" rx="8" fill="#a26542"/>
+              <ellipse cx="318" cy="200" rx="33" ry="28" fill="#bd7a4c"/>
+              <circle cx="301" cy="174" r="7" fill="#9b603c"/>
+              <circle cx="333" cy="174" r="7" fill="#9b603c"/>
+              <ellipse cx="310" cy="212" rx="6" ry="3.5" fill="#ff9fba" opacity=".45"/>
+              <circle cx="327" cy="196" r="3.6" fill="#3d291e"/>
+              <circle cx="328.4" cy="194.6" r="1.2" fill="#fff"/>
+              <ellipse cx="342" cy="211" rx="14" ry="11" fill="#a96a45"/>
+              <ellipse cx="347" cy="207" rx="4" ry="2.6" fill="#2f2018"/>
+              <circle cx="318" cy="156" r="17" fill="#ffa04d"/>
+              <circle cx="313" cy="162" r="11" fill="#f08a35" opacity=".55"/>
+              <circle cx="313" cy="151" r="4.5" fill="#ffd8ad" opacity=".85"/>
+              <rect x="316" y="136" width="3.5" height="8" rx="1.75" fill="#8a5a3b"/>
+              <ellipse cx="327" cy="139" rx="6.5" ry="3" fill="#65ac62" transform="rotate(-24 327 139)"/>
+              <path d="M354 122 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 Z" fill="#ffd979"/>
+              <path d="M272 116 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z" fill="#ffd979" opacity=".8"/>
+            </g>
+
+            <!-- CAPY CON: nón tiệc mini -->
+            <g>
+              <ellipse cx="368" cy="238" rx="15" ry="11" fill="#6faf5f"/>
+              <ellipse cx="368" cy="238" rx="15" ry="11" fill="none" stroke="#4e8a4a" stroke-width="2.5"/>
+              <ellipse cx="380" cy="250" rx="33" ry="21" fill="#c07e50"/>
+              <rect x="362" y="260" width="11" height="17" rx="5.5" fill="#a26542"/>
+              <rect x="388" y="262" width="11" height="17" rx="5.5" fill="#a26542"/>
+              <ellipse cx="412" cy="232" rx="20" ry="17" fill="#c58457"/>
+              <circle cx="403" cy="217" r="4.5" fill="#9b603c"/>
+              <circle cx="421" cy="217" r="4.5" fill="#9b603c"/>
+              <circle cx="418" cy="230" r="2.6" fill="#3d291e"/>
+              <circle cx="418.9" cy="229" r=".9" fill="#fff"/>
+              <ellipse cx="425" cy="238" rx="8" ry="6.5" fill="#a96a45"/>
+              <ellipse cx="428" cy="235.5" rx="2.4" ry="1.6" fill="#2f2018"/>
+              <path d="M402 218 L412 190 L422 218 Z" fill="#ff8ea8"/>
+              <circle cx="409" cy="210" r="2" fill="#fff"/>
+              <circle cx="414" cy="203" r="2" fill="#fff"/>
+              <circle cx="412" cy="216" r="2" fill="#fff" opacity=".9"/>
+              <circle cx="412" cy="189" r="3.5" fill="#ffd979"/>
+            </g>
+
+            <!-- cỏ -->
+            <g stroke="#77c88a" stroke-width="2.5" stroke-linecap="round" fill="none">
+              <path d="M30 292 q3 -12 6 0 M39 292 q3 -9 6 0"/>
+              <path d="M150 296 q3 -12 6 0 M159 296 q3 -9 6 0"/>
+              <path d="M300 296 q3 -12 6 0 M309 296 q3 -9 6 0"/>
+              <path d="M436 290 q3 -12 6 0 M445 290 q3 -9 6 0"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="capy-caption">
+          <h2>Chill like a capybara.</h2>
+          <p>Code. Learn. Explore. Stay curious. 🌱</p>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="about">
+      <div class="section-head">
+        <h2>About me</h2>
+        <p>A simple introduction behind the name <strong>MilanVu</strong>.</p>
+      </div>
+
+      <div class="card about">
+        My name is <strong>Nhật Minh</strong>, but online I go by
+        <strong>MilanVu</strong>. I'm a young developer from Vietnam who enjoys
+        <strong>cybersecurity</strong>, <strong>programming</strong>, and
+        experimenting with technology. I like understanding how systems work,
+        building projects, testing ideas, and learning from every mistake.
+      </div>
+
+      <div class="card about" style="margin-top:13px;">
+        I was born in <strong>2012</strong>. That may sound surprising to some
+        people because this is still a relatively young age to be seriously
+        interested in coding and cybersecurity. But that's part of my story:
+        I started exploring technology early, and I'm still learning every day.
+      </div>
+    </section>
+
+    <section id="interests">
+      <div class="section-head">
+        <h2>What I do</h2>
+        <p>The things I'm most curious about right now.</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card info">
+          <div class="emoji">🛡️</div>
+          <h3>Cybersecurity</h3>
+          <p>
+            Exploring security concepts, vulnerabilities, operating systems,
+            and the ideas behind making digital systems safer.
+          </p>
+        </article>
+
+        <article class="card info">
+          <div class="emoji">💻</div>
+          <h3>Coding</h3>
+          <p>
+            Writing projects, debugging problems, experimenting with software,
+            and learning by actually building things.
+          </p>
+        </article>
+
+        <article class="card info">
+          <div class="emoji">🔍</div>
+          <h3>Tech Exploration</h3>
+          <p>
+            I enjoy taking technology apart conceptually and figuring out how
+            different devices, systems, and tools work together.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="section-head">
+        <h2>Core interests</h2>
+        <p>Topics I want my profile to be associated with.</p>
+      </div>
+
+      <div class="card skills">
+        <span class="pill">Cybersecurity</span>
+        <span class="pill">Programming</span>
+        <span class="pill">Software Development</span>
+        <span class="pill">Security Research</span>
+        <span class="pill">Operating Systems</span>
+        <span class="pill">Problem Solving</span>
+        <span class="pill">Technology</span>
+        <span class="pill">Continuous Learning</span>
+        <span class="pill">GitHub</span>
+      </div>
+    </section>
+
+    <section id="socials">
+      <div class="section-head">
+        <h2>Find me online</h2>
+        <p>These are my public profiles and places where I share my work.</p>
+      </div>
+
+      <div class="socials">
+        <a class="social github" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
+        <a class="social telegram" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="social telegram-group" href="https://t.me/denrindzwp" target="_blank" rel="noopener">💬 Telegram Group</a>
+        <a class="social tiktok" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
+        <a class="social facebook" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <span class="capy-mini">🐹</span>
+      Built with curiosity by <strong>MilanVu</strong> • Vietnam 🇻🇳
+    </div>
+  </footer>
+<script>
+    (function () {
+      var paused = false;
+      function update() {
+        document.body.classList.toggle('anim-paused', paused || document.hidden);
+      }
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          paused = !entries[0].isIntersecting;
+          update();
+        }, { threshold: 0 }).observe(document.querySelector('header'));
+      }
+      document.addEventListener('visibilitychange', update);
+    })();
+  </script>
+</body>
+</html>
