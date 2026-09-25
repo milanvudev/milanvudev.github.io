@@ -334,9 +334,18 @@
 
     .capy-wrap {
       position: relative;
-      min-height: 315px;
+      min-height: 280px;
       display: grid;
       place-items: center;
+    }
+
+    .capy-img {
+      width: min(100%, 380px);
+      height: auto;
+      display: block;
+      margin-top: 12px;
+      position: relative;
+      z-index: 2;
     }
 
     .sun {
@@ -350,127 +359,19 @@
       box-shadow: 0 0 0 15px rgba(255,217,121,.15);
     }
 
-    .capy {
-      position: relative;
-      width: 205px;
-      height: 155px;
-      margin-top: 35px;
-      animation: bob 3.2s ease-in-out infinite;
-      will-change: transform;
-      z-index: 2;
-    }
 
-    @media (hover: hover) {
-      .capy:hover {
-        animation: bob 3.2s ease-in-out infinite, wiggle .35s ease-in-out 2;
-      }
-    }
 
-    .capy-body {
-      position: absolute;
-      width: 166px;
-      height: 111px;
-      left: 22px;
-      top: 42px;
-      border-radius: 52% 48% 42% 48%;
-      background: #b87548;
-      box-shadow: inset -10px -10px 0 rgba(113,73,43,.13);
-    }
 
-    .capy-head {
-      position: absolute;
-      width: 96px;
-      height: 82px;
-      right: 3px;
-      top: 21px;
-      border-radius: 48% 44% 45% 52%;
-      background: #bd7a4c;
-      z-index: 3;
-    }
 
-    .ear {
-      position: absolute;
-      width: 21px;
-      height: 24px;
-      top: -8px;
-      border-radius: 50%;
-      background: #9b603c;
-    }
 
-    .ear.left { left: 18px; }
-    .ear.right { right: 18px; }
 
-    .eye {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #3d291e;
-      border-radius: 50%;
-      top: 28px;
-      animation: blink 5s ease-in-out infinite;
-    }
 
-    .eye.left { left: 29px; }
-    .eye.right { right: 28px; }
 
-    .snout {
-      position: absolute;
-      right: -3px;
-      top: 39px;
-      width: 43px;
-      height: 31px;
-      background: #a96a45;
-      border-radius: 55% 45% 50% 55%;
-    }
 
-    .nose {
-      position: absolute;
-      width: 9px;
-      height: 6px;
-      background: #2f2018;
-      border-radius: 50%;
-      right: 8px;
-      top: 8px;
-    }
 
-    .leg {
-      position: absolute;
-      bottom: -7px;
-      width: 25px;
-      height: 45px;
-      background: #a26542;
-      border-radius: 0 0 13px 13px;
-      z-index: 1;
-    }
 
-    .leg.one { left: 47px; }
-    .leg.two { left: 82px; }
-    .leg.three { left: 137px; }
-    .leg.four { left: 158px; }
 
-    .apple {
-      position: absolute;
-      width: 27px;
-      height: 27px;
-      background: #ff8ea8;
-      border-radius: 50%;
-      right: 2px;
-      bottom: 38px;
-      z-index: 5;
-      box-shadow: inset -4px -4px 0 rgba(177,73,94,.15);
-    }
 
-    .apple::before {
-      content: "";
-      position: absolute;
-      width: 12px;
-      height: 5px;
-      background: #65ac62;
-      right: -2px;
-      top: -5px;
-      border-radius: 80% 20%;
-      transform: rotate(18deg);
-    }
 
     .capy-caption {
       position: relative;
@@ -489,20 +390,8 @@
       font-size: .9rem;
     }
 
-    @keyframes bob {
-      0%,100% { transform: translateY(0) rotate(-1deg); }
-      50% { transform: translateY(-8px) rotate(1deg); }
-    }
 
-    @keyframes wiggle {
-      0%, 100% { rotate: 0deg; }
-      50% { rotate: -6deg; }
-    }
 
-    @keyframes blink {
-      0%, 92%, 100% { transform: scaleY(1); }
-      95% { transform: scaleY(.1); }
-    }
 
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -674,13 +563,10 @@
 
     @media (max-width: 400px) {
       .buttons .btn { flex: 1 1 100%; }
-      .capy-wrap { min-height: 280px; }
-      .capy { transform: scale(.88); }
+      .capy-wrap { min-height: 240px; }
     }
 
-    body.anim-paused .cloud,
-    body.anim-paused .capy,
-    body.anim-paused .eye {
+    body.anim-paused .cloud {
       animation-play-state: paused !important;
     }
 
@@ -760,21 +646,96 @@ MilanVu
         <div class="capy-wrap">
           <div class="sun"></div>
 
-          <div class="capy" aria-label="Cute capybara illustration">
-            <div class="capy-body"></div>
-            <div class="capy-head">
-              <div class="ear left"></div>
-              <div class="ear right"></div>
-              <div class="eye left"></div>
-              <div class="eye right"></div>
-              <div class="snout"><div class="nose"></div></div>
-            </div>
-            <div class="leg one"></div>
-            <div class="leg two"></div>
-            <div class="leg three"></div>
-            <div class="leg four"></div>
-            <div class="apple"></div>
-          </div>
+          <svg class="capy-img" viewBox="0 0 460 300" role="img" aria-label="Đàn capybara đội nón, đeo balo rùa và giữ thăng bằng quả cam trên đầu">
+            <!-- bóng đổ -->
+            <ellipse cx="100" cy="258" rx="62" ry="10" fill="#6b4a35" opacity=".10"/>
+            <ellipse cx="252" cy="282" rx="70" ry="11" fill="#6b4a35" opacity=".10"/>
+            <ellipse cx="388" cy="280" rx="40" ry="7" fill="#6b4a35" opacity=".10"/>
+
+            <!-- CAPY TRÁI: nón rơm + balo rùa -->
+            <g>
+              <ellipse cx="78" cy="168" rx="36" ry="27" fill="#6faf5f"/>
+              <ellipse cx="78" cy="168" rx="36" ry="27" fill="none" stroke="#4e8a4a" stroke-width="4"/>
+              <ellipse cx="78" cy="168" rx="28" ry="19" fill="#8cc47a"/>
+              <polygon points="78,154 90,161 90,175 78,182 66,175 66,161" fill="none" stroke="#4e8a4a" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M108 166 Q122 188 118 214" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
+              <ellipse cx="96" cy="212" rx="55" ry="33" fill="#b87548"/>
+              <ellipse cx="99" cy="224" rx="45" ry="18" fill="#a26542" opacity=".55"/>
+              <rect x="64" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
+              <rect x="93" y="233" width="15" height="24" rx="7.5" fill="#a26542"/>
+              <rect x="121" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
+              <ellipse cx="156" cy="184" rx="30" ry="26" fill="#bd7a4c"/>
+              <circle cx="140" cy="160" r="6.5" fill="#9b603c"/>
+              <circle cx="170" cy="160" r="6.5" fill="#9b603c"/>
+              <circle cx="164" cy="180" r="3.4" fill="#3d291e"/>
+              <circle cx="165.3" cy="178.8" r="1.1" fill="#fff"/>
+              <ellipse cx="179" cy="194" rx="13" ry="10.5" fill="#a96a45"/>
+              <ellipse cx="184" cy="190.5" rx="3.6" ry="2.4" fill="#2f2018"/>
+              <ellipse cx="154" cy="156" rx="29" ry="8" fill="#e3bd6d"/>
+              <path d="M137 156 Q154 118 171 156 Z" fill="#f0d28a"/>
+              <path d="M141 149 Q154 141 167 149" fill="none" stroke="#c96f4a" stroke-width="5" stroke-linecap="round"/>
+            </g>
+
+            <!-- CAPY GIỮA: to nhất, quả cam trên đầu + balo rùa -->
+            <g>
+              <ellipse cx="234" cy="184" rx="40" ry="30" fill="#5f9e57"/>
+              <ellipse cx="234" cy="184" rx="40" ry="30" fill="none" stroke="#447a41" stroke-width="4"/>
+              <ellipse cx="234" cy="184" rx="31" ry="21" fill="#7fb96e"/>
+              <polygon points="234,169 247,176 247,191 234,198 221,191 221,176" fill="none" stroke="#447a41" stroke-width="2.5" stroke-linejoin="round"/>
+              <circle cx="215" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
+              <circle cx="253" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
+              <path d="M266 176 Q280 198 276 226" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
+              <ellipse cx="250" cy="232" rx="58" ry="37" fill="#b87548"/>
+              <ellipse cx="253" cy="246" rx="49" ry="20" fill="#a26542" opacity=".55"/>
+              <rect x="214" y="252" width="16" height="26" rx="8" fill="#a26542"/>
+              <rect x="246" y="255" width="16" height="26" rx="8" fill="#a26542"/>
+              <rect x="278" y="252" width="16" height="26" rx="8" fill="#a26542"/>
+              <ellipse cx="318" cy="200" rx="33" ry="28" fill="#bd7a4c"/>
+              <circle cx="301" cy="174" r="7" fill="#9b603c"/>
+              <circle cx="333" cy="174" r="7" fill="#9b603c"/>
+              <ellipse cx="310" cy="212" rx="6" ry="3.5" fill="#ff9fba" opacity=".45"/>
+              <circle cx="327" cy="196" r="3.6" fill="#3d291e"/>
+              <circle cx="328.4" cy="194.6" r="1.2" fill="#fff"/>
+              <ellipse cx="342" cy="211" rx="14" ry="11" fill="#a96a45"/>
+              <ellipse cx="347" cy="207" rx="4" ry="2.6" fill="#2f2018"/>
+              <circle cx="318" cy="156" r="17" fill="#ffa04d"/>
+              <circle cx="313" cy="162" r="11" fill="#f08a35" opacity=".55"/>
+              <circle cx="313" cy="151" r="4.5" fill="#ffd8ad" opacity=".85"/>
+              <rect x="316" y="136" width="3.5" height="8" rx="1.75" fill="#8a5a3b"/>
+              <ellipse cx="327" cy="139" rx="6.5" ry="3" fill="#65ac62" transform="rotate(-24 327 139)"/>
+              <path d="M354 122 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 Z" fill="#ffd979"/>
+              <path d="M272 116 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z" fill="#ffd979" opacity=".8"/>
+            </g>
+
+            <!-- CAPY CON: nón tiệc mini -->
+            <g>
+              <ellipse cx="368" cy="238" rx="15" ry="11" fill="#6faf5f"/>
+              <ellipse cx="368" cy="238" rx="15" ry="11" fill="none" stroke="#4e8a4a" stroke-width="2.5"/>
+              <ellipse cx="380" cy="250" rx="33" ry="21" fill="#c07e50"/>
+              <rect x="362" y="260" width="11" height="17" rx="5.5" fill="#a26542"/>
+              <rect x="388" y="262" width="11" height="17" rx="5.5" fill="#a26542"/>
+              <ellipse cx="412" cy="232" rx="20" ry="17" fill="#c58457"/>
+              <circle cx="403" cy="217" r="4.5" fill="#9b603c"/>
+              <circle cx="421" cy="217" r="4.5" fill="#9b603c"/>
+              <circle cx="418" cy="230" r="2.6" fill="#3d291e"/>
+              <circle cx="418.9" cy="229" r=".9" fill="#fff"/>
+              <ellipse cx="425" cy="238" rx="8" ry="6.5" fill="#a96a45"/>
+              <ellipse cx="428" cy="235.5" rx="2.4" ry="1.6" fill="#2f2018"/>
+              <path d="M402 218 L412 190 L422 218 Z" fill="#ff8ea8"/>
+              <circle cx="409" cy="210" r="2" fill="#fff"/>
+              <circle cx="414" cy="203" r="2" fill="#fff"/>
+              <circle cx="412" cy="216" r="2" fill="#fff" opacity=".9"/>
+              <circle cx="412" cy="189" r="3.5" fill="#ffd979"/>
+            </g>
+
+            <!-- cỏ -->
+            <g stroke="#77c88a" stroke-width="2.5" stroke-linecap="round" fill="none">
+              <path d="M30 292 q3 -12 6 0 M39 292 q3 -9 6 0"/>
+              <path d="M150 296 q3 -12 6 0 M159 296 q3 -9 6 0"/>
+              <path d="M300 296 q3 -12 6 0 M309 296 q3 -9 6 0"/>
+              <path d="M436 290 q3 -12 6 0 M445 290 q3 -9 6 0"/>
+            </g>
+          </svg>
         </div>
 
         <div class="capy-caption">
