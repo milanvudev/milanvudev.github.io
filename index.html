@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MilanVu — Vietnamese coder and cybersecurity enthusiast." />
+  <title>MilanVu — Capybara Corner 🐹</title>
+
+  <style>
+    :root {
+      --cream: #fff8df;
+      --cream-2: #fff2c5;
+      --sky: #a9e7ff;
+      --sky-2: #dff7ff;
+      --mint: #bff4c8;
+      --green: #77c88a;
+      --orange: #ffb765;
+      --brown: #8e654b;
+      --brown-dark: #5c402f;
+      --pink: #ff9fba;
+      --white: rgba(255,255,255,.82);
+      --line: rgba(95, 64, 47, .12);
+      --shadow: 0 18px 50px rgba(112, 78, 52, .13);
+      --text: #523c2d;
+      --muted: #7e6758;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,.88) 0 90px, transparent 91px),
+        radial-gradient(circle at 80% 12%, rgba(255,255,255,.76) 0 70px, transparent 71px),
+        linear-gradient(180deg, var(--sky) 0%, var(--sky-2) 42%, #effbdc 72%, var(--mint) 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -2;
+      border-radius: 50%;
+      filter: blur(1px);
+      pointer-events: none;
+    }
+
+    body::before {
+      width: 360px;
+      height: 360px;
+      right: -130px;
+      top: 130px;
+      background: rgba(255,255,255,.22);
+    }
+
+    body::after {
+      width: 300px;
+      height: 300px;
+      left: -120px;
+      bottom: 70px;
+      background: rgba(255, 183, 101, .12);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(1080px, calc(100% - 34px));
+      margin: 0 auto;
+    }
+
+    .cloud {
+      position: absolute;
+      width: 120px;
+      height: 36px;
+      background: rgba(255,255,255,.65);
+      border-radius: 999px;
+      filter: blur(.3px);
+      animation: floatCloud 18s linear infinite;
+      z-index: 0;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      background: inherit;
+      border-radius: 50%;
+    }
+
+    .cloud::before { width: 46px; height: 46px; left: 18px; }
+    .cloud::after { width: 62px; height: 62px; left: 52px; }
+
+    .cloud-1 { top: 120px; left: -160px; }
+    .cloud-2 { top: 270px; right: -190px; transform: scale(.8); animation-duration: 24s; }
+    .cloud-3 { top: 470px; left: -180px; transform: scale(.55); animation-duration: 28s; }
+
+    @keyframes floatCloud {
+      from { translate: 0 0; }
+      50% { translate: 85px 8px; }
+      to { translate: 170px 0; }
+    }
+
+    nav {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      padding-top: 12px;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(255,255,255,.7);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      font-weight: 900;
+      letter-spacing: .2px;
+      color: var(--brown-dark);
+    }
+
+    .brand span { color: #e69745; }
+
+    .nav-links {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      padding: 8px 10px;
+      color: var(--muted);
+      border-radius: 11px;
+      font-size: .86rem;
+      transition: .2s ease;
+    }
+
+    .nav-links a:hover {
+      background: #fff;
+      color: var(--brown-dark);
+      transform: translateY(-1px);
+    }
+
+    header {
+      position: relative;
+      padding: 72px 0 36px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.14fr .86fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-main {
+      padding: 38px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #fff4d3;
+      color: #9d6a35;
+      border: 1px solid #f7d89e;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(3.25rem, 8vw, 6rem);
+      line-height: .9;
+      letter-spacing: -4px;
+      color: var(--brown-dark);
+      margin-bottom: 18px;
+    }
+
+    h1 .orange { color: #e88c3e; }
+
+    .lead {
+      max-width: 690px;
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 1.03rem;
+    }
+
+    .lead strong { color: var(--brown-dark); }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: .88rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 7px 18px rgba(96, 65, 44, .07);
+      transition: .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 11px 23px rgba(96, 65, 44, .12);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(135deg, #eea24f, #f6c06c);
+      border-color: transparent;
+    }
+
+    .terminal {
+      margin-top: 25px;
+      border-radius: 17px;
+      overflow: hidden;
+      background: #fffdf5;
+      border: 1px solid #eadfca;
+    }
+
+    .terminal-bar {
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-bottom: 1px solid #eee3d0;
+      background: #fff8e8;
+    }
+
+    .terminal-bar i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: block;
+      background: #dfbe86;
+    }
+
+    .terminal-bar span {
+      margin-left: 4px;
+      color: #a58e78;
+      font: .72rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .terminal pre {
+      margin: 0;
+      padding: 15px 16px;
+      white-space: pre-wrap;
+      color: #745947;
+      font: .81rem/1.8 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .cmd { color: #df873a; }
+    .ok { color: #58a870; }
+    .key { color: #6b98bb; }
+
+    .capy-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+      padding: 25px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.83), rgba(255,248,223,.86));
+    }
+
+    .capy-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -45px -80px -45px;
+      height: 190px;
+      background: #a9dc86;
+      border-radius: 50% 50% 0 0;
+    }
+
+    .capy-wrap {
+      position: relative;
+      min-height: 315px;
+      display: grid;
+      place-items: center;
+    }
+
+    .sun {
+      position: absolute;
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      right: 24px;
+      top: 6px;
+      background: #ffd979;
+      box-shadow: 0 0 0 15px rgba(255,217,121,.15);
+    }
+
+    .capy {
+      position: relative;
+      width: 205px;
+      height: 155px;
+      margin-top: 35px;
+      animation: bob 3.2s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    .capy-body {
+      position: absolute;
+      width: 166px;
+      height: 111px;
+      left: 22px;
+      top: 42px;
+      border-radius: 52% 48% 42% 48%;
+      background: #b87548;
+      box-shadow: inset -10px -10px 0 rgba(113,73,43,.13);
+    }
+
+    .capy-head {
+      position: absolute;
+      width: 96px;
+      height: 82px;
+      right: 3px;
+      top: 21px;
+      border-radius: 48% 44% 45% 52%;
+      background: #bd7a4c;
+      z-index: 3;
+    }
+
+    .ear {
+      position: absolute;
+      width: 21px;
+      height: 24px;
+      top: -8px;
+      border-radius: 50%;
+      background: #9b603c;
+    }
+
+    .ear.left { left: 18px; }
+    .ear.right { right: 18px; }
+
+    .eye {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #3d291e;
+      border-radius: 50%;
+      top: 28px;
+    }
+
+    .eye.left { left: 29px; }
+    .eye.right { right: 28px; }
+
+    .snout {
+      position: absolute;
+      right: -3px;
+      top: 39px;
+      width: 43px;
+      height: 31px;
+      background: #a96a45;
+      border-radius: 55% 45% 50% 55%;
+    }
+
+    .nose {
+      position: absolute;
+      width: 9px;
+      height: 6px;
+      background: #2f2018;
+      border-radius: 50%;
+      right: 8px;
+      top: 8px;
+    }
+
+    .leg {
+      position: absolute;
+      bottom: -7px;
+      width: 25px;
+      height: 45px;
+      background: #a26542;
+      border-radius: 0 0 13px 13px;
+      z-index: 1;
+    }
+
+    .leg.one { left: 47px; }
+    .leg.two { left: 82px; }
+    .leg.three { left: 137px; }
+    .leg.four { left: 158px; }
+
+    .apple {
+      position: absolute;
+      width: 27px;
+      height: 27px;
+      background: #ff8ea8;
+      border-radius: 50%;
+      right: 2px;
+      bottom: 38px;
+      z-index: 5;
+      box-shadow: inset -4px -4px 0 rgba(177,73,94,.15);
+    }
+
+    .apple::before {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 5px;
+      background: #65ac62;
+      right: -2px;
+      top: -5px;
+      border-radius: 80% 20%;
+      transform: rotate(18deg);
+    }
+
+    .capy-caption {
+      position: relative;
+      z-index: 4;
+      text-align: center;
+    }
+
+    .capy-caption h2 {
+      font-size: 1.8rem;
+      color: var(--brown-dark);
+      margin-bottom: 6px;
+    }
+
+    .capy-caption p {
+      color: #8c6d58;
+      font-size: .9rem;
+    }
+
+    @keyframes bob {
+      0%,100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    section { padding: 30px 0; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 15px;
+    }
+
+    .section-head h2 {
+      font-size: 1.7rem;
+      color: var(--brown-dark);
+      letter-spacing: -.8px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      text-align: right;
+      max-width: 560px;
+      line-height: 1.6;
+      font-size: .9rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 13px;
+    }
+
+    .info {
+      padding: 23px;
+      transition: .22s ease;
+    }
+
+    .info:hover {
+      transform: translateY(-4px);
+      background: rgba(255,255,255,.94);
+    }
+
+    .emoji {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+
+    .info h3 {
+      color: var(--brown-dark);
+      font-size: 1.04rem;
+      margin-bottom: 8px;
+    }
+
+    .info p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: .9rem;
+    }
+
+    .about {
+      padding: 26px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .about strong { color: var(--brown-dark); }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 23px;
+    }
+
+    .pill {
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: .83rem;
+      font-weight: 750;
+      border: 1px solid var(--line);
+      background: #fffdf5;
+      color: #715848;
+    }
+
+    .pill:nth-child(3n+1) { background: #fff2d7; }
+    .pill:nth-child(3n+2) { background: #e9fbef; }
+    .pill:nth-child(3n) { background: #e8f7ff; }
+
+    .socials {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 11px;
+    }
+
+    .social {
+      padding: 18px 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.79);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: .88rem;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .social:hover {
+      transform: translateY(-4px);
+      background: #fff;
+    }
+
+    .social.github { color: #3f3c39; }
+    .social.telegram { color: #2187b9; }
+    .social.tiktok { color: #242424; }
+    .social.facebook { color: #2f6bc2; }
+
+    footer {
+      padding: 55px 0 70px;
+      text-align: center;
+      color: #70866d;
+      font-size: .84rem;
+    }
+
+    footer .capy-mini {
+      font-size: 1.35rem;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .socials { grid-template-columns: repeat(2, 1fr); }
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+      .section-head p { text-align: left; }
+    }
+
+    @media (max-width: 600px) {
+      .container { width: min(100% - 20px, 1080px); }
+      .nav-links { display: none; }
+      header { padding-top: 42px; }
+      .hero-main, .capy-card, .info, .about { padding: 21px; }
+      h1 { font-size: clamp(3rem, 18vw, 4.4rem); letter-spacing: -3px; }
+      .socials { grid-template-columns: 1fr 1fr; }
+      .buttons .btn { flex: 1 1 45%; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <div class="brand">Milan<span>Vu</span> 🐹</div>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#interests">Interests</a>
+          <a href="#skills">Skills</a>
+          <a href="#socials">Socials</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div class="container hero">
+      <div class="card hero-main">
+        <div class="eyebrow">🌿 Welcome to my little corner of the internet</div>
+
+        <h1>Hi, I'm <span class="orange">MilanVu.</span></h1>
+
+        <p class="lead">
+          I'm <strong>Nhật Minh</strong>, also known online as
+          <strong>MilanVu</strong>. I'm from Vietnam 🇻🇳 and I'm interested in
+          <strong>cybersecurity</strong>, <strong>coding</strong>, and exploring
+          how technology works.
+        </p>
+
+        <div class="buttons">
+          <a class="btn primary" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
+          <a class="btn" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
+          <a class="btn" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
+          <a class="btn" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
+        </div>
+
+        <div class="terminal">
+          <div class="terminal-bar">
+            <i></i><i></i><i></i>
+            <span>milanvu@capybara: ~/profile</span>
+          </div>
+          <pre><span class="cmd">$ whoami</span>
+MilanVu
+
+<span class="cmd">$ cat identity.txt</span>
+<span class="key">Name</span>        : Nhật Minh
+<span class="key">Nickname</span>    : MilanVu
+<span class="key">Nationality</span> : Vietnamese 🇻🇳
+<span class="key">Born</span>        : 2012
+
+<span class="cmd">$ focus</span>
+<span class="ok">Cybersecurity</span> + <span class="ok">Coding</span> + Curiosity 🐹</pre>
+        </div>
+      </div>
+
+      <aside class="card capy-card">
+        <div class="capy-wrap">
+          <div class="sun"></div>
+
+          <div class="capy" aria-label="Cute capybara illustration">
+            <div class="capy-body"></div>
+            <div class="capy-head">
+              <div class="ear left"></div>
+              <div class="ear right"></div>
+              <div class="eye left"></div>
+              <div class="eye right"></div>
+              <div class="snout"><div class="nose"></div></div>
+            </div>
+            <div class="leg one"></div>
+            <div class="leg two"></div>
+            <div class="leg three"></div>
+            <div class="leg four"></div>
+            <div class="apple"></div>
+          </div>
+        </div>
+
+        <div class="capy-caption">
+          <h2>Chill like a capybara.</h2>
+          <p>Code. Learn. Explore. Stay curious. 🌱</p>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="about">
+      <div class="section-head">
+        <h2>About me</h2>
+        <p>A simple introduction behind the name <strong>MilanVu</strong>.</p>
+      </div>
+
+      <div class="card about">
+        My name is <strong>Nhật Minh</strong>, but online I go by
+        <strong>MilanVu</strong>. I'm a young developer from Vietnam who enjoys
+        <strong>cybersecurity</strong>, <strong>programming</strong>, and
+        experimenting with technology. I like understanding how systems work,
+        building projects, testing ideas, and learning from every mistake.
+      </div>
+
+      <div class="card about" style="margin-top:13px;">
+        I was born in <strong>2012</strong>. That may sound surprising to some
+        people because this is still a relatively young age to be seriously
+        interested in coding and cybersecurity. But that's part of my story:
+        I started exploring technology early, and I'm still learning every day.
+      </div>
+    </section>
+
+    <section id="interests">
+      <div class="section-head">
+        <h2>What I do</h2>
+        <p>The things I'm most curious about right now.</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card info">
+          <div class="emoji">🛡️</div>
+          <h3>Cybersecurity</h3>
+          <p>
+            Exploring security concepts, vulnerabilities, operating systems,
+            and the ideas behind making digital systems safer.
+          </p>
+        </article>
+
+        <article class="card info">
+          <div class="emoji">💻</div>
+          <h3>Coding</h3>
+          <p>
+            Writing projects, debugging problems, experimenting with software,
+            and learning by actually building things.
+          </p>
+        </article>
+
+        <article class="card info">
+          <div class="emoji">🔍</div>
+          <h3>Tech Exploration</h3>
+          <p>
+            I enjoy taking technology apart conceptually and figuring out how
+            different devices, systems, and tools work together.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="section-head">
+        <h2>Core interests</h2>
+        <p>Topics I want my profile to be associated with.</p>
+      </div>
+
+      <div class="card skills">
+        <span class="pill">Cybersecurity</span>
+        <span class="pill">Programming</span>
+        <span class="pill">Software Development</span>
+        <span class="pill">Security Research</span>
+        <span class="pill">Operating Systems</span>
+        <span class="pill">Problem Solving</span>
+        <span class="pill">Technology</span>
+        <span class="pill">Continuous Learning</span>
+        <span class="pill">GitHub</span>
+      </div>
+    </section>
+
+    <section id="socials">
+      <div class="section-head">
+        <h2>Find me online</h2>
+        <p>These are my public profiles and places where I share my work.</p>
+      </div>
+
+      <div class="socials">
+        <a class="social github" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
+        <a class="social telegram" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="social tiktok" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
+        <a class="social facebook" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <span class="capy-mini">🐹</span>
+      Built with curiosity by <strong>MilanVu</strong> • Vietnam 🇻🇳
+    </div>
+  </footer>
+</body>
+</html>
