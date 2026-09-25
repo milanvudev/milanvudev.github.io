@@ -27,7 +27,11 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
 
     body {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -47,7 +51,6 @@
       position: fixed;
       z-index: -2;
       border-radius: 50%;
-      filter: blur(1px);
       pointer-events: none;
     }
 
@@ -67,7 +70,11 @@
       background: rgba(255, 183, 101, .12);
     }
 
-    a { color: inherit; text-decoration: none; }
+    a {
+      color: inherit;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     .container {
       width: min(1080px, calc(100% - 34px));
@@ -80,7 +87,6 @@
       height: 36px;
       background: rgba(255,255,255,.65);
       border-radius: 999px;
-      filter: blur(.3px);
       animation: floatCloud 18s linear infinite;
       z-index: 0;
     }
@@ -123,8 +129,10 @@
       border-radius: 18px;
       background: rgba(255,255,255,.74);
       border: 1px solid rgba(255,255,255,.7);
-      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
       box-shadow: var(--shadow);
+      contain: layout paint;
     }
 
     .brand {
@@ -149,10 +157,12 @@
       transition: .2s ease;
     }
 
-    .nav-links a:hover {
-      background: #fff;
-      color: var(--brown-dark);
-      transform: translateY(-1px);
+    @media (hover: hover) {
+      .nav-links a:hover {
+        background: #fff;
+        color: var(--brown-dark);
+        transform: translateY(-1px);
+      }
     }
 
     header {
@@ -172,13 +182,14 @@
       border: 1px solid rgba(255,255,255,.72);
       border-radius: 28px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
+      contain: layout paint;
     }
 
     .hero-main {
       padding: 38px;
       position: relative;
       overflow: hidden;
+      animation: fadeInUp .7s ease-out both;
     }
 
     .eyebrow {
@@ -233,12 +244,19 @@
       background: #fff;
       border: 1px solid var(--line);
       box-shadow: 0 7px 18px rgba(96, 65, 44, .07);
-      transition: .2s ease;
+      transition: transform .2s ease, box-shadow .2s ease;
+      touch-action: manipulation;
     }
 
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 11px 23px rgba(96, 65, 44, .12);
+    @media (hover: hover) {
+      .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 11px 23px rgba(96, 65, 44, .12);
+      }
+    }
+
+    .btn:active {
+      transform: scale(.96);
     }
 
     .btn.primary {
@@ -299,6 +317,7 @@
       padding: 25px;
       overflow: hidden;
       background: linear-gradient(180deg, rgba(255,255,255,.83), rgba(255,248,223,.86));
+      animation: fadeInUp .7s ease-out .12s both;
     }
 
     .capy-card::before {
@@ -335,6 +354,12 @@
       margin-top: 35px;
       animation: bob 3.2s ease-in-out infinite;
       z-index: 2;
+    }
+
+    @media (hover: hover) {
+      .capy:hover {
+        animation: bob 3.2s ease-in-out infinite, wiggle .35s ease-in-out 2;
+      }
     }
 
     .capy-body {
@@ -378,6 +403,7 @@
       background: #3d291e;
       border-radius: 50%;
       top: 28px;
+      animation: blink 5s ease-in-out infinite;
     }
 
     .eye.left { left: 29px; }
@@ -464,6 +490,21 @@
       50% { transform: translateY(-8px) rotate(1deg); }
     }
 
+    @keyframes wiggle {
+      0%, 100% { rotate: 0deg; }
+      50% { rotate: -6deg; }
+    }
+
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(.1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     section { padding: 30px 0; }
 
     .section-head {
@@ -499,9 +540,11 @@
       transition: .22s ease;
     }
 
-    .info:hover {
-      transform: translateY(-4px);
-      background: rgba(255,255,255,.94);
+    @media (hover: hover) {
+      .info:hover {
+        transform: translateY(-4px);
+        background: rgba(255,255,255,.94);
+      }
     }
 
     .emoji {
@@ -552,7 +595,7 @@
 
     .socials {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 11px;
     }
 
@@ -568,16 +611,24 @@
       gap: 8px;
       font-size: .88rem;
       font-weight: 800;
-      transition: .2s ease;
+      transition: transform .2s ease, background .2s ease;
+      touch-action: manipulation;
     }
 
-    .social:hover {
-      transform: translateY(-4px);
-      background: #fff;
+    @media (hover: hover) {
+      .social:hover {
+        transform: translateY(-4px);
+        background: #fff;
+      }
+    }
+
+    .social:active {
+      transform: scale(.96);
     }
 
     .social.github { color: #3f3c39; }
     .social.telegram { color: #2187b9; }
+    .social.telegram-group { color: #2187b9; }
     .social.tiktok { color: #242424; }
     .social.facebook { color: #2f6bc2; }
 
@@ -597,7 +648,6 @@
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr; }
       .grid-3 { grid-template-columns: 1fr; }
-      .socials { grid-template-columns: repeat(2, 1fr); }
       .section-head {
         align-items: start;
         flex-direction: column;
@@ -611,8 +661,22 @@
       header { padding-top: 42px; }
       .hero-main, .capy-card, .info, .about { padding: 21px; }
       h1 { font-size: clamp(3rem, 18vw, 4.4rem); letter-spacing: -3px; }
-      .socials { grid-template-columns: 1fr 1fr; }
       .buttons .btn { flex: 1 1 45%; }
+    }
+
+    @media (max-width: 400px) {
+      .buttons .btn { flex: 1 1 100%; }
+      .capy-wrap { min-height: 280px; }
+      .capy { transform: scale(.88); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
@@ -653,6 +717,7 @@
         <div class="buttons">
           <a class="btn primary" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
           <a class="btn" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
+          <a class="btn" href="https://t.me/denrindzwp" target="_blank" rel="noopener">💬 Telegram Group</a>
           <a class="btn" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
           <a class="btn" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
         </div>
@@ -792,6 +857,7 @@ MilanVu
       <div class="socials">
         <a class="social github" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
         <a class="social telegram" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="social telegram-group" href="https://t.me/denrindzwp" target="_blank" rel="noopener">💬 Telegram Group</a>
         <a class="social tiktok" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
         <a class="social facebook" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
       </div>
