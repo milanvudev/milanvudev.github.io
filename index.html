@@ -6,532 +6,637 @@
   <meta name="description" content="MilanVu — Vietnamese coder and cybersecurity enthusiast." />
   <title>MilanVu — Capybara Corner 🐹</title>
 
+  <script>
+    document.documentElement.classList.add('js');
+    try {
+      const savedTheme = localStorage.getItem('milanvu-theme');
+      if (savedTheme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    } catch (e) {}
+  </script>
+
   <style>
     :root {
-      --cream: #fff8df;
-      --cream-2: #fff2c5;
+      /* Liquid Glass Colors */
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.7);
+      --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.07), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      
       --sky: #a9e7ff;
       --sky-2: #dff7ff;
       --mint: #bff4c8;
-      --green: #77c88a;
-      --orange: #ffb765;
-      --brown: #8e654b;
       --brown-dark: #5c402f;
-      --pink: #ff9fba;
-      --white: rgba(255,255,255,.82);
-      --line: rgba(95, 64, 47, .12);
-      --shadow: 0 10px 28px rgba(112, 78, 52, .10);
       --text: #523c2d;
       --muted: #7e6758;
+      --line: rgba(95, 64, 47, 0.12);
+    }
+
+    [data-theme="dark"] {
+      --glass-bg: rgba(30, 41, 59, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      
+      --sky: #0f172a;
+      --sky-2: #1e293b;
+      --mint: #0b1120;
+      --brown-dark: #f3f4f6;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --line: rgba(255, 255, 255, 0.1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at 15% 20%, rgba(255,255,255,.88) 0 90px, transparent 91px),
-        radial-gradient(circle at 80% 12%, rgba(255,255,255,.76) 0 70px, transparent 71px),
-        linear-gradient(180deg, var(--sky) 0%, var(--sky-2) 42%, #effbdc 72%, var(--mint) 100%);
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sky-2) 42%, #effbdc 72%, var(--mint) 100%);
       min-height: 100vh;
       overflow-x: hidden;
+      transition: background .5s ease, color .5s ease;
     }
 
-    body::before,
-    body::after {
+    [data-theme="dark"] body {
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sky-2) 42%, #0f172a 72%, var(--mint) 100%);
+    }
+
+    body.loading, body.theme-switching { overflow: hidden; }
+
+    /* ================= LIQUID GLASS COMPONENTS ================= */
+    .liquid-glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Hiệu ứng ánh sáng phản chiếu (Specular highlight) */
+    .liquid-glass::before {
       content: "";
-      position: fixed;
-      z-index: -2;
-      border-radius: 50%;
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
       pointer-events: none;
+      z-index: 1;
     }
 
-    body::before {
-      width: 360px;
-      height: 360px;
-      right: -130px;
-      top: 130px;
-      background: rgba(255,255,255,.22);
+    [data-theme="dark"] .liquid-glass::before {
+      background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
     }
 
-    body::after {
-      width: 300px;
-      height: 300px;
-      left: -120px;
-      bottom: 70px;
-      background: rgba(255, 183, 101, .12);
+    a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+    .container { width: min(1080px, calc(100% - 34px)); margin: 0 auto; }
+
+    /* ================= LOADER ================= */
+    .loader {
+      position: fixed; inset: 0; z-index: 9999;
+      display: grid; place-items: center;
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sky-2) 45%, #effbdc 75%, var(--mint) 100%);
+      transition: opacity .5s ease, visibility .5s ease;
+    }
+    .loader.hide { opacity: 0; visibility: hidden; }
+    .loader-inner { text-align: center; position: relative; z-index: 2; }
+    
+    .loader-capy {
+      width: 120px; height: auto; display: block; margin: 0 auto;
+      animation: capyBob 1.5s ease-in-out infinite;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
+    .loader-text {
+      margin-top: 16px; font-size: .74rem; font-weight: 900; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--brown-dark); display: inline-flex; align-items: center; gap: 4px;
     }
 
-    .container {
-      width: min(1080px, calc(100% - 34px));
-      margin: 0 auto;
+    .loader-text i {
+      width: 5px; height: 5px; border-radius: 50%; background: var(--brown-dark);
+      animation: dotPulse 1.2s ease-in-out infinite;
+    }
+    .loader-text i:nth-child(2) { animation-delay: .15s; }
+    .loader-text i:nth-child(3) { animation-delay: .3s; }
+
+    @keyframes dotPulse {
+      0%, 100% { opacity: .25; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-3px); }
     }
 
-    .cloud {
-      position: absolute;
-      width: 120px;
-      height: 36px;
-      background: rgba(255,255,255,.65);
-      border-radius: 999px;
-      z-index: 0;
+    .loader-bar {
+      width: 190px; height: 9px; margin: 14px auto 0; border-radius: 999px;
+      background: rgba(255,255,255,.4); box-shadow: inset 0 1px 3px rgba(0,0,0,.1); overflow: hidden;
     }
 
-    .cloud::before,
-    .cloud::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      background: inherit;
-      border-radius: 50%;
+    .loader-bar span {
+      display: block; height: 100%; width: 38%; border-radius: inherit;
+      background: linear-gradient(90deg, #eea24f, #f6c06c, #77c88a);
+      animation: loadSlide 1.15s ease-in-out infinite;
     }
 
-    .cloud::before { width: 46px; height: 46px; left: 18px; }
-    .cloud::after { width: 62px; height: 62px; left: 52px; }
-
-    .cloud-1 { top: 120px; left: -160px; }
-    .cloud-2 { top: 270px; right: -190px; transform: scale(.8); }
-    .cloud-3 { top: 470px; left: -180px; transform: scale(.55); }
-
-    nav {
-      position: sticky;
-      top: 12px;
-      z-index: 20;
-      padding-top: 12px;
+    @keyframes loadSlide {
+      0% { transform: translateX(-110%); }
+      100% { transform: translateX(280%); }
     }
+
+    /* ================= LANGUAGE OVERLAY ================= */
+    .lang-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(169, 231, 255, 0.3);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      display: grid; place-items: center;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    [data-theme="dark"] .lang-overlay { background: rgba(15, 23, 42, 0.4); }
+    body.lang-switching .lang-overlay { opacity: 1; visibility: visible; pointer-events: auto; }
+
+    .lang-spinner-wrapper {
+      position: relative; width: 100px; height: 100px; display: grid; place-items: center;
+    }
+    .lang-spinner {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      animation: spinLoad 1.2s linear infinite;
+    }
+    .lang-capy-logo {
+      font-size: 3rem; line-height: 1;
+      animation: jumpCapy 0.5s ease-in-out infinite alternate;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+    }
+    @keyframes jumpCapy {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-12px) scale(1.1); }
+    }
+    @keyframes spinLoad { 100% { transform: rotate(360deg); } }
+
+    /* ================= THEME OVERLAY ================= */
+    .theme-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity .4s ease, visibility .4s ease, background .5s ease;
+      overflow: hidden;
+    }
+    body.theme-switching .theme-overlay { opacity: 1; visibility: visible; pointer-events: auto; }
+
+    .theme-sky-icon {
+      position: relative; z-index: 10;
+      font-size: 7rem; line-height: 1;
+      filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+      animation: spinGlow 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    [data-theme="dark"] .theme-sky-icon { filter: drop-shadow(0 0 30px rgba(200, 220, 255, 0.4)); }
+
+    @keyframes spinGlow {
+      0% { transform: scale(0.2) rotate(0deg); opacity: 0; }
+      50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+      100% { transform: scale(1) rotate(360deg); opacity: 1; }
+    }
+
+    .theme-runway {
+      position: absolute; bottom: 30%; width: 100%; height: 200px;
+      z-index: 5; pointer-events: none;
+    }
+
+    .running-capy {
+      position: absolute; bottom: 0; height: auto;
+      filter: drop-shadow(0 15px 10px rgba(0,0,0,0.15));
+      will-change: transform;
+    }
+
+    /* Hiệu ứng bụi mờ */
+    .running-capy::after {
+      content: ""; position: absolute; top: 50%; right: 100%; width: 80px; height: 4px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8));
+      border-radius: 50%; transform: translateY(-50%);
+    }
+    [data-theme="dark"] .running-capy::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3)); }
+
+    .capy-1 { width: 130px; animation: runAcross1 1.6s cubic-bezier(0.3, 0, 0.7, 1) 0.1s forwards; }
+    .capy-2 { width: 90px; bottom: 20px; animation: runAcross2 1.9s cubic-bezier(0.3, 0, 0.7, 1) 0.25s forwards; }
+    .capy-3 { width: 160px; bottom: -10px; animation: runAcross3 1.4s cubic-bezier(0.3, 0, 0.7, 1) 0s forwards; }
+
+    @keyframes runAcross1 {
+      0% { transform: translateX(-250px) translateY(0); }
+      50% { transform: translateX(50vw) translateY(-20px); }
+      100% { transform: translateX(110vw) translateY(0); }
+    }
+    @keyframes runAcross2 {
+      0% { transform: translateX(-250px) translateY(0); }
+      50% { transform: translateX(50vw) translateY(-15px); }
+      100% { transform: translateX(110vw) translateY(0); }
+    }
+    @keyframes runAcross3 {
+      0% { transform: translateX(-250px) translateY(0); }
+      50% { transform: translateX(50vw) translateY(-25px); }
+      100% { transform: translateX(110vw) translateY(0); }
+    }
+
+    /* ================= SCROLL PROGRESS ================= */
+    .progress {
+      position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 60; pointer-events: none;
+    }
+    .progress span {
+      display: block; height: 100%; width: 0; border-radius: 0 999px 999px 0;
+      background: linear-gradient(90deg, #ffb765, #f6c06c, #77c88a, #a9e7ff);
+      transition: width .1s linear;
+    }
+
+    /* ================= NAV ================= */
+    nav { position: sticky; top: 12px; z-index: 20; padding-top: 12px; }
 
     .nav-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 15px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.94);
-      border: 1px solid rgba(255,255,255,.7);
-      box-shadow: var(--shadow);
+      display: flex; justify-content: space-between; align-items: center; gap: 14px;
+      padding: 10px 18px;
+      border-radius: 20px;
     }
 
     .brand {
-      font-weight: 900;
-      letter-spacing: .2px;
-      color: var(--brown-dark);
+      font-weight: 900; letter-spacing: .2px; color: var(--brown-dark);
+      display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+      z-index: 2;
     }
-
     .brand span { color: #e69745; }
+    .brand em { font-style: normal; display: inline-block; animation: capyWiggle 3.4s ease-in-out infinite; }
 
-    .nav-links {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
+    @keyframes capyWiggle {
+      0%, 88%, 100% { transform: rotate(0) translateY(0); }
+      92% { transform: rotate(-12deg) translateY(-2px); }
+      96% { transform: rotate(10deg) translateY(-1px); }
     }
+
+    .nav-right { display: flex; align-items: center; gap: 8px; min-width: 0; z-index: 2; }
+    .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
 
     .nav-links a {
-      padding: 8px 10px;
-      color: var(--muted);
-      border-radius: 11px;
-      font-size: .86rem;
+      position: relative; padding: 8px 12px; color: var(--muted);
+      border-radius: 12px; font-size: .86rem; font-weight: 650;
+      transition: background .2s ease, color .2s ease;
     }
+    .nav-links a:hover { background: rgba(255,255,255,0.3); color: var(--brown-dark); }
+    [data-theme="dark"] .nav-links a:hover { background: rgba(255,255,255,0.1); }
+    .nav-links a.active { color: var(--brown-dark); background: rgba(255,255,255,0.5); }
+    [data-theme="dark"] .nav-links a.active { background: rgba(255,255,255,0.15); }
 
-    @media (hover: hover) {
-      .nav-links a:hover {
-        background: #fff;
-        color: var(--brown-dark);
-      }
+    .nav-controls { display: flex; gap: 8px; }
+
+    .lang-switch, .theme-btn {
+      display: flex; gap: 3px; padding: 3px; border-radius: 14px;
+      background: rgba(255,255,255,0.4); border: 1px solid var(--glass-border);
+      flex: 0 0 auto; transition: background .3s ease;
     }
+    [data-theme="dark"] .lang-switch, [data-theme="dark"] .theme-btn { background: rgba(0,0,0,0.2); }
 
-    header {
-      position: relative;
-      padding: 72px 0 36px;
+    .theme-btn {
+      align-items: center; justify-content: center; width: 34px; height: 34px;
+      cursor: pointer; font-size: 1.1rem; color: var(--text); border: none;
+      transition: transform .2s ease;
     }
+    .theme-btn:hover { transform: scale(1.1) rotate(15deg); }
+    .theme-btn:active { transform: scale(.9); }
 
-    .hero {
-      display: grid;
-      grid-template-columns: 1.14fr .86fr;
-      gap: 20px;
-      align-items: stretch;
+    .lang-btn {
+      border: 0; background: transparent; font: inherit; font-size: .76rem; font-weight: 900;
+      letter-spacing: .04em; color: var(--muted); padding: 6px 10px; border-radius: 10px; cursor: pointer;
+      transition: all .25s ease;
     }
-
-    .card {
-      background: var(--white);
-      border: 1px solid rgba(255,255,255,.72);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
+    .lang-btn.active {
+      background: linear-gradient(135deg, #eea24f, #f6c06c); color: #fff;
+      box-shadow: 0 4px 10px rgba(238,162,79,.3);
     }
+    .lang-btn:active { transform: scale(.93); }
 
-    .hero-main {
-      padding: 38px;
-      position: relative;
-      overflow: hidden;
-    }
+    /* ================= HERO ================= */
+    header { position: relative; padding: 72px 0 36px; }
+    .hero { display: grid; grid-template-columns: 1.14fr .86fr; gap: 20px; align-items: stretch; }
 
+    .hero-main { padding: 38px; }
     .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: #fff4d3;
-      color: #9d6a35;
-      border: 1px solid #f7d89e;
-      border-radius: 999px;
-      font-size: .8rem;
-      font-weight: 800;
-      margin-bottom: 18px;
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+      background: rgba(255,255,255,0.5); color: var(--brown-dark); border: 1px solid var(--glass-border);
+      border-radius: 999px; font-size: .8rem; font-weight: 800; margin-bottom: 18px;
+      position: relative; z-index: 2;
     }
+    [data-theme="dark"] .eyebrow { background: rgba(255,255,255,0.1); }
 
     h1 {
-      font-size: clamp(3.25rem, 8vw, 6rem);
-      line-height: .9;
-      letter-spacing: -4px;
-      color: var(--brown-dark);
-      margin-bottom: 18px;
+      font-size: clamp(3.25rem, 8vw, 6rem); line-height: .9; letter-spacing: -4px;
+      color: var(--brown-dark); margin-bottom: 18px; position: relative; z-index: 2;
     }
-
     h1 .orange { color: #e88c3e; }
 
-    .lead {
-      max-width: 690px;
-      color: var(--muted);
-      line-height: 1.82;
-      font-size: 1.03rem;
-    }
-
+    .lead { max-width: 690px; color: var(--muted); line-height: 1.82; font-size: 1.03rem; position: relative; z-index: 2; }
     .lead strong { color: var(--brown-dark); }
 
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; position: relative; z-index: 2; }
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 11px 14px;
-      border-radius: 14px;
-      font-weight: 800;
-      font-size: .88rem;
-      background: #fff;
-      border: 1px solid var(--line);
-      box-shadow: 0 7px 18px rgba(96, 65, 44, .07);
-      touch-action: manipulation;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 12px 16px; border-radius: 16px; font-weight: 800; font-size: .88rem;
+      background: rgba(255,255,255,0.4); border: 1px solid var(--glass-border); color: var(--text);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: transform .2s ease, background .3s ease;
     }
-
-    @media (hover: hover) {
-      .btn:hover {
-        box-shadow: 0 11px 23px rgba(96, 65, 44, .12);
-      }
-    }
-
+    [data-theme="dark"] .btn { background: rgba(255,255,255,0.08); }
+    .btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.7); }
+    [data-theme="dark"] .btn:hover { background: rgba(255,255,255,0.15); }
     .btn:active { transform: scale(.96); }
 
     .btn.primary {
-      color: #fff;
-      background: linear-gradient(135deg, #eea24f, #f6c06c);
-      border-color: transparent;
+      color: #fff; background: linear-gradient(135deg, #eea24f, #f6c06c);
+      border-color: rgba(255,255,255,0.4);
     }
 
+    /* Terminal */
     .terminal {
-      margin-top: 25px;
-      border-radius: 17px;
-      overflow: hidden;
-      background: #fffdf5;
-      border: 1px solid #eadfca;
+      margin-top: 25px; border-radius: 18px; overflow: hidden;
+      background: rgba(0,0,0,0.03); border: 1px solid var(--line);
+      position: relative; z-index: 2;
     }
+    [data-theme="dark"] .terminal { background: rgba(0,0,0,0.3); }
 
     .terminal-bar {
-      padding: 9px 12px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      border-bottom: 1px solid #eee3d0;
-      background: #fff8e8;
+      padding: 10px 14px; display: flex; align-items: center; gap: 7px;
+      border-bottom: 1px solid var(--line); background: rgba(255,255,255,0.2);
     }
-
-    .terminal-bar i {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      display: block;
-      background: #dfbe86;
-    }
-
-    .terminal-bar span {
-      margin-left: 4px;
-      color: #a58e78;
-      font: .72rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
+    [data-theme="dark"] .terminal-bar { background: rgba(255,255,255,0.03); }
+    .terminal-bar i { width: 9px; height: 9px; border-radius: 50%; display: block; background: #dfbe86; }
+    .terminal-bar i:nth-child(1) { background: #ffb3a7; }
+    .terminal-bar i:nth-child(2) { background: #ffd98a; }
+    .terminal-bar i:nth-child(3) { background: #a8dfa0; }
+    .terminal-bar span { margin-left: 4px; color: var(--muted); font: .72rem ui-monospace, monospace; }
 
     .terminal pre {
-      margin: 0;
-      padding: 15px 16px;
-      white-space: pre-wrap;
-      color: #745947;
-      font: .81rem/1.8 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      margin: 0; padding: 16px; white-space: pre-wrap; color: var(--text);
+      font: .81rem/1.8 ui-monospace, monospace;
     }
+    .cmd { color: #df873a; } .ok { color: #58a870; } .key { color: #6b98bb; }
+    [data-theme="dark"] .cmd { color: #fbbf24; } [data-theme="dark"] .ok { color: #4ade80; } [data-theme="dark"] .key { color: #60a5fa; }
 
-    .cmd { color: #df873a; }
-    .ok { color: #58a870; }
-    .key { color: #6b98bb; }
+    .cursor {
+      display: inline-block; width: 8px; height: 13px; background: #df873a;
+      vertical-align: -2px; margin-left: 3px; border-radius: 1px;
+      animation: caretBlink 1.05s steps(2, start) infinite;
+    }
+    @keyframes caretBlink { 50% { opacity: 0; } }
 
+    /* Capy card + playground */
     .capy-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 100%;
-      padding: 25px;
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(255,255,255,.83), rgba(255,248,223,.86));
+      position: relative; display: flex; flex-direction: column; gap: 14px;
+      min-height: 100%; padding: 20px;
     }
 
-    .capy-card::before {
-      content: "";
-      position: absolute;
-      inset: auto -45px -80px -45px;
-      height: 190px;
-      background: #a9dc86;
-      border-radius: 50% 50% 0 0;
+    .capy-stage {
+      --u: 1;
+      position: relative; z-index: 2; isolation: isolate;
+      flex: 1 1 auto; min-height: 340px;
+      border-radius: 22px; overflow: hidden;
+      background: linear-gradient(180deg, rgba(120, 205, 255, .55) 0%, rgba(223, 247, 255, .45) 48%, rgba(255, 255, 255, 0) 100%);
+      border: 1px solid var(--glass-border);
+      touch-action: pan-y;
+      -webkit-user-select: none; user-select: none;
+      transition: background .5s ease;
     }
+    [data-theme="dark"] .capy-stage {
+      background: linear-gradient(180deg, rgba(5, 10, 25, .8) 0%, rgba(24, 36, 58, .55) 55%, rgba(30, 41, 59, 0) 100%);
+    }
+    .capy-stage.over-grass { cursor: pointer; }
 
-    .capy-wrap {
-      position: relative;
-      min-height: 280px;
-      display: grid;
-      place-items: center;
+    /* stars (dark mode only) */
+    .capy-stage::before {
+      content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      opacity: 0; transition: opacity .5s ease;
+      background-image:
+        radial-gradient(1.6px 1.6px at 12% 14%, #fff 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 30% 8%, #fff 50%, transparent 52%),
+        radial-gradient(1.4px 1.4px at 46% 22%, #fff 50%, transparent 52%),
+        radial-gradient(1px 1px at 62% 12%, #fff 50%, transparent 52%),
+        radial-gradient(1.4px 1.4px at 78% 32%, #fff 50%, transparent 52%),
+        radial-gradient(1px 1px at 22% 32%, #fff 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 90% 10%, #fff 50%, transparent 52%);
     }
-
-    .capy-img {
-      width: min(100%, 380px);
-      height: auto;
-      display: block;
-      margin-top: 12px;
-      position: relative;
-      z-index: 2;
-    }
+    [data-theme="dark"] .capy-stage::before { opacity: .75; }
 
     .sun {
-      position: absolute;
-      width: 85px;
-      height: 85px;
-      border-radius: 50%;
-      right: 24px;
-      top: 6px;
-      background: #ffd979;
-      box-shadow: 0 0 0 15px rgba(255,217,121,.15);
+      position: absolute; z-index: 1; width: 74px; height: 74px; border-radius: 50%;
+      right: 8%; top: 9%; background: #ffd979;
+      box-shadow: 0 0 40px rgba(255, 217, 121, .65);
+      transition: background .5s ease, box-shadow .5s ease;
+    }
+    [data-theme="dark"] .sun {
+      background: #cbd5e1;
+      box-shadow: inset -14px -9px 0 0 #64748b, 0 0 30px rgba(203, 213, 225, .25);
     }
 
-    .capy-caption {
-      position: relative;
-      z-index: 4;
-      text-align: center;
+    .twinkle { position: absolute; z-index: 1; font-size: 1rem; animation: twinkle 2.8s ease-in-out infinite; pointer-events: none; }
+    .twinkle.t2 { animation-delay: 1.2s; font-size: .8rem; }
+    @keyframes twinkle { 0%, 100% { opacity: .35; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.15); } }
+
+    .capy-hill {
+      position: absolute; z-index: 1; left: -8%; right: -8%; bottom: 0; height: 56%;
+      border-radius: 50% 50% 0 0 / 18% 18% 0 0;
+      background: linear-gradient(180deg, #a5e08f 0%, #7fca7c 50%, #62b06f 100%);
+      box-shadow: inset 0 10px 18px rgba(255, 255, 255, .35);
+      transition: background .5s ease;
+    }
+    [data-theme="dark"] .capy-hill {
+      background: linear-gradient(180deg, #2f5f48 0%, #214a39 50%, #17382b 100%);
+      box-shadow: inset 0 8px 16px rgba(255, 255, 255, .08);
     }
 
-    .capy-caption h2 {
-      font-size: 1.8rem;
-      color: var(--brown-dark);
-      margin-bottom: 6px;
+    .tufts { position: absolute; inset: 0; z-index: 2; pointer-events: none; color: #3f9a58; }
+    [data-theme="dark"] .tufts { color: #58b883; }
+    .tuft { position: absolute; width: 16px; height: 10px; transform: translate(-50%, -100%); }
+    .tuft svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+    .capy-hint {
+      position: absolute; z-index: 5; left: 10px; top: 10px; max-width: 60%;
+      padding: 6px 11px; border-radius: 14px; font-size: .72rem; font-weight: 800; line-height: 1.45;
+      color: var(--brown-dark); background: rgba(255, 255, 255, .55); border: 1px solid var(--glass-border);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      pointer-events: none; transition: opacity .4s ease;
+    }
+    [data-theme="dark"] .capy-hint { background: rgba(15, 23, 42, .55); }
+    .capy-hint.quiet { opacity: .55; }
+    .capy-hint.nudge { animation: hintShake .5s ease; }
+    @keyframes hintShake { 0%, 100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+    /* Capybara actors (positioned by JS) */
+    .capy-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+    .capy-actor {
+      position: absolute; left: 0; top: 0; opacity: 0;
+      transform-origin: 50% 100%; will-change: transform;
+    }
+    .capy-actor.ready { opacity: 1; transition: opacity .3s ease; }
+    .capy-actor .bob { display: block; transform-origin: 30% 100%; }
+    .capy-actor svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .capy-actor .shadow {
+      position: absolute; left: 8%; right: 8%; bottom: -3px; height: 9px; border-radius: 50%;
+      background: rgba(40, 25, 15, .22); filter: blur(2.5px);
+    }
+    [data-theme="dark"] .capy-actor .shadow { background: rgba(0, 0, 0, .35); }
+    .capy-actor.a { width: calc(var(--u) * 118px); }
+    .capy-actor.b { width: calc(var(--u) * 124px); }
+    .capy-actor.c { width: calc(var(--u) * 78px); }
+    .capy-actor.d { width: calc(var(--u) * 72px); }
+
+    /* Food, effects, cursor ring */
+    .food { position: absolute; transform: translate(-50%, -80%); pointer-events: none; animation: foodDrop .45s cubic-bezier(.3, 1.5, .5, 1); }
+    .food-ico {
+      display: inline-block; font-size: calc(var(--u) * 24px); line-height: 1;
+      transform-origin: 50% 100%; transform: scale(var(--sc, 1)); transition: transform .25s ease;
+      filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .18));
+    }
+    @keyframes foodDrop {
+      0% { opacity: 0; transform: translate(-50%, calc(-80% - 46px)) scale(.4); }
+      60% { opacity: 1; }
+      100% { opacity: 1; transform: translate(-50%, -80%) scale(1); }
     }
 
-    .capy-caption p {
-      color: #8c6d58;
-      font-size: .9rem;
+    .pop {
+      position: absolute; font-size: calc(var(--u) * 17px); line-height: 1; pointer-events: none;
+      transform: translate(-50%, -50%); animation: popUp 1s ease-out forwards;
+    }
+    @keyframes popUp {
+      0% { opacity: 0; transform: translate(-50%, -30%) scale(.5); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -190%) scale(1.15); }
     }
 
-    section {
-      padding: 30px 0;
-      scroll-margin-top: 84px;
+    .ripple {
+      position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .9); pointer-events: none; animation: rippleOut .6s ease-out forwards;
     }
+    @keyframes rippleOut { from { transform: scale(.4); opacity: 1; } to { transform: scale(3.2); opacity: 0; } }
+
+    .capy-ring {
+      position: absolute; left: 0; top: 0; z-index: 5; width: 18px; height: 18px; margin: -9px 0 0 -9px;
+      border-radius: 50%; border: 2px dashed rgba(255, 255, 255, .85); pointer-events: none;
+      opacity: 0; transition: opacity .2s ease;
+    }
+    .capy-ring.on { opacity: .8; }
+    @media (hover: none) { .capy-ring { display: none; } }
+
+    .capy-caption { position: relative; z-index: 2; text-align: center; }
+    .capy-caption h2 { font-size: 1.6rem; color: var(--brown-dark); margin-bottom: 4px; }
+    .capy-caption p { color: var(--muted); font-size: .9rem; }
+
+    @keyframes capyBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .view-counter.is-off { display: none; }
+
+    /* ================= SECTIONS ================= */
+    section { padding: 30px 0; scroll-margin-top: 84px; }
 
     .section-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      align-items: end;
-      margin-bottom: 15px;
+      display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 15px;
     }
-
     .section-head h2 {
-      font-size: 1.7rem;
-      color: var(--brown-dark);
-      letter-spacing: -.8px;
+      font-size: 1.7rem; color: var(--brown-dark); letter-spacing: -.8px;
+      position: relative; padding-left: 16px;
     }
-
-    .section-head p {
-      color: var(--muted);
-      text-align: right;
-      max-width: 560px;
-      line-height: 1.6;
-      font-size: .9rem;
+    .section-head h2::before {
+      content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 7px; height: 1.3em; border-radius: 99px; background: linear-gradient(180deg, #ffb765, #77c88a);
     }
+    .section-head p { color: var(--muted); text-align: right; max-width: 560px; line-height: 1.6; font-size: .9rem; }
+    .section-head p strong { color: var(--brown-dark); }
 
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 13px;
-    }
-
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
     .info { padding: 23px; }
+    .info:hover { transform: translateY(-5px); }
+    
+    .emoji { font-size: 1.6rem; margin-bottom: 12px; display: inline-block; position: relative; z-index: 2; }
+    .info h3 { color: var(--brown-dark); font-size: 1.04rem; margin-bottom: 8px; position: relative; z-index: 2; }
+    .info p { color: var(--muted); line-height: 1.7; font-size: .9rem; position: relative; z-index: 2; }
 
-    @media (hover: hover) {
-      .info:hover { background: rgba(255,255,255,.94); }
-    }
-
-    .emoji {
-      font-size: 1.6rem;
-      margin-bottom: 12px;
-    }
-
-    .info h3 {
-      color: var(--brown-dark);
-      font-size: 1.04rem;
-      margin-bottom: 8px;
-    }
-
-    .info p {
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: .9rem;
-    }
-
-    .about {
-      padding: 26px;
-      line-height: 1.8;
-      color: var(--muted);
-    }
-
+    .about { padding: 26px; line-height: 1.8; color: var(--muted); }
     .about strong { color: var(--brown-dark); }
+    .about, .info, .capy-card, .hero-main { transition: transform .3s ease; }
 
-    .skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 23px;
-    }
-
+    .skills { display: flex; flex-wrap: wrap; gap: 10px; padding: 23px; }
     .pill {
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-size: .83rem;
-      font-weight: 750;
-      border: 1px solid var(--line);
-      background: #fffdf5;
-      color: #715848;
+      padding: 10px 14px; border-radius: 999px; font-size: .83rem; font-weight: 750;
+      border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4); color: var(--brown-dark);
+      transition: transform .2s ease, background .2s ease; position: relative; z-index: 2;
     }
+    [data-theme="dark"] .pill { background: rgba(255,255,255,0.08); }
+    .pill:hover { transform: translateY(-3px) scale(1.05); background: rgba(255,255,255,0.7); }
+    [data-theme="dark"] .pill:hover { background: rgba(255,255,255,0.15); }
 
-    .pill:nth-child(3n+1) { background: #fff2d7; }
-    .pill:nth-child(3n+2) { background: #e9fbef; }
-    .pill:nth-child(3n) { background: #e8f7ff; }
-
-    /* ===== Capybara gang ===== */
-    .gang {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 13px;
-    }
-
-    .gang-card {
-      padding: 18px 12px 16px;
-      text-align: center;
-    }
-
-    .gang-card svg {
-      width: min(100%, 140px);
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
-
-    .gang-card figcaption {
-      margin-top: 10px;
-      line-height: 1.45;
-    }
-
-    .gang-card strong {
-      display: block;
-      color: var(--brown-dark);
-      font-size: .95rem;
-      margin-bottom: 2px;
-    }
-
-    .gang-card span {
-      color: var(--muted);
-      font-size: .8rem;
-    }
-
-    .footer-capys {
-      width: min(220px, 55%);
-      height: auto;
-      display: block;
-      margin: 0 auto 12px;
-    }
-
-    .socials {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 11px;
-    }
-
+    /* ===== Socials ===== */
+    .socials { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
     .social {
-      padding: 18px 15px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.79);
-      border: 1px solid rgba(255,255,255,.72);
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: .88rem;
-      font-weight: 800;
-      touch-action: manipulation;
+      padding: 18px 15px; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: .88rem; font-weight: 800;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .social:hover { transform: translateY(-4px); background: rgba(255,255,255,0.6); }
+    [data-theme="dark"] .social:hover { background: rgba(255,255,255,0.15); }
+
+    /* ================= FOOTER ================= */
+    footer { padding: 55px 0 70px; text-align: center; color: var(--muted); font-size: .84rem; }
+    .footer-capys { width: min(220px, 55%); height: auto; display: block; margin: 0 auto 12px; }
+    footer .capy-mini { font-size: 1.35rem; vertical-align: middle; margin-right: 6px; display: inline-block; animation: capyBob 3.6s ease-in-out infinite; }
+    footer strong { color: var(--brown-dark); }
+
+    .view-counter {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; margin-top: 15px; border-radius: 999px;
+      font-weight: 800; font-size: 0.9rem;
+      color: var(--brown-dark);
+    }
+    .view-counter svg { width: 18px; height: 18px; fill: currentColor; }
+    #viewCountNum { font-size: 1.1rem; letter-spacing: 0.5px; }
+
+    /* ================= BACK TO TOP ================= */
+    .to-top {
+      position: fixed; right: 18px; bottom: 18px; width: 46px; height: 46px; border-radius: 50%;
+      border: 1px solid var(--glass-border); cursor: pointer; display: grid; place-items: center;
+      font-size: 1.05rem; color: var(--brown-dark); background: rgba(255,255,255,0.5); backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      opacity: 0; transform: translateY(16px) scale(.85); pointer-events: none; z-index: 50;
+      transition: opacity .3s ease, transform .3s ease, background .3s ease;
+    }
+    [data-theme="dark"] .to-top { background: rgba(30, 41, 59, 0.6); }
+    .to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+    .to-top:hover { transform: translateY(-4px); background: rgba(255,255,255,0.8); }
+
+    /* ================= SPARKLES ================= */
+    .spark {
+      position: fixed; z-index: 998; pointer-events: none; font-size: 1rem; line-height: 1;
+      animation: sparkFly .8s ease-out forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes sparkFly {
+      0% { transform: translate(-50%, -50%) scale(.5); opacity: 0; }
+      30% { opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); opacity: 0; }
     }
 
-    @media (hover: hover) {
-      .social:hover { background: #fff; }
+    /* ================= REVEAL ================= */
+    .js .reveal {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
+      will-change: opacity, transform;
     }
+    .js .reveal.in { opacity: 1; transform: none; }
+    .js .grid-3 > .reveal:nth-child(2) { transition-delay: .1s; }
+    .js .grid-3 > .reveal:nth-child(3) { transition-delay: .2s; }
 
-    .social:active { transform: scale(.96); }
-
-    .social.github { color: #3f3c39; }
-    .social.telegram { color: #2187b9; }
-    .social.telegram-group { color: #2187b9; }
-    .social.tiktok { color: #242424; }
-    .social.facebook { color: #2f6bc2; }
-
-    footer {
-      padding: 55px 0 70px;
-      text-align: center;
-      color: #70866d;
-      font-size: .84rem;
-    }
-
-    footer .capy-mini {
-      font-size: 1.35rem;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
-
+    /* ================= RESPONSIVE ================= */
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr; }
       .grid-3 { grid-template-columns: 1fr; }
-      .section-head {
-        align-items: start;
-        flex-direction: column;
-      }
+      .section-head { align-items: start; flex-direction: column; }
       .section-head p { text-align: left; }
     }
-
     @media (max-width: 600px) {
       .container { width: min(100% - 20px, 1080px); }
       .nav-links { display: none; }
@@ -541,15 +646,19 @@
       .buttons .btn { flex: 1 1 45%; }
     }
 
-    @media (max-width: 400px) {
-      .buttons .btn { flex: 1 1 100%; }
-      .capy-wrap { min-height: 240px; }
+    /* ================= REDUCED MOTION ================= */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+      .js .reveal { opacity: 1; transform: none; }
+      .lang-overlay, .theme-overlay { display: none !important; }
     }
   </style>
 </head>
 
-<body>
-  <!-- Kho linh kiện capy dùng chung (tĩnh, không animation) -->
+<body class="loading">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
       <g id="capy-base">
@@ -571,20 +680,82 @@
     </defs>
   </svg>
 
-  <div class="cloud cloud-1"></div>
-  <div class="cloud cloud-2"></div>
-  <div class="cloud cloud-3"></div>
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <svg class="loader-capy" viewBox="-70 -70 140 140" aria-hidden="true">
+        <ellipse cx="0" cy="52" rx="42" ry="7" fill="#6b4a35" opacity=".13"/>
+        <use href="#capy-face"/>
+      </svg>
+      <div class="loader-text">Loading<i></i><i></i><i></i></div>
+      <div class="loader-bar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- LANG OVERLAY -->
+  <div class="lang-overlay" id="langOverlay" aria-hidden="true">
+    <div class="lang-spinner-wrapper">
+      <svg class="lang-spinner" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="38" stroke="#f6c06c" stroke-width="8" fill="none" stroke-dasharray="160 80" stroke-linecap="round"/>
+      </svg>
+      <div class="lang-capy-logo">🐹</div>
+    </div>
+  </div>
+
+  <!-- THEME OVERLAY -->
+  <div class="theme-overlay" id="themeOverlay" aria-hidden="true">
+    <div class="theme-sky-icon" id="themeSkyIcon">🌙</div>
+    <div class="theme-runway">
+      <svg class="running-capy capy-1" viewBox="-60 -60 120 120" aria-hidden="true">
+        <ellipse cx="0" cy="45" rx="35" ry="6" fill="#000" opacity=".15"/>
+        <use href="#capy-base"/>
+        <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
+        <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
+        <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <svg class="running-capy capy-2" viewBox="-60 -60 120 120" aria-hidden="true">
+        <ellipse cx="0" cy="45" rx="35" ry="6" fill="#000" opacity=".15"/>
+        <use href="#capy-base"/>
+        <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
+        <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
+        <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <svg class="running-capy capy-3" viewBox="-60 -60 120 120" aria-hidden="true">
+        <ellipse cx="0" cy="45" rx="35" ry="6" fill="#000" opacity=".15"/>
+        <use href="#capy-base"/>
+        <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
+        <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
+        <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
+        <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
 
   <nav>
     <div class="container">
-      <div class="nav-inner">
-        <div class="brand">Milan<span>Vu</span> 🐹</div>
-        <div class="nav-links">
-          <a href="#about">About</a>
-          <a href="#interests">Interests</a>
-          <a href="#gang">Capy Gang</a>
-          <a href="#skills">Skills</a>
-          <a href="#socials">Socials</a>
+      <div class="nav-inner liquid-glass">
+        <div class="brand">Milan<span>Vu</span> <em>🐹</em></div>
+        <div class="nav-right">
+          <div class="nav-links">
+            <a href="#about" data-en="About" data-vi="Giới thiệu">About</a>
+            <a href="#interests" data-en="Interests" data-vi="Sở thích">Interests</a>
+            <a href="#skills" data-en="Skills" data-vi="Kỹ năng">Skills</a>
+            <a href="#socials" data-en="Socials" data-vi="Mạng xã hội">Socials</a>
+          </div>
+          <div class="nav-controls">
+            <button type="button" class="theme-btn" id="themeBtn" aria-label="Toggle Dark Mode">🌙</button>
+            <div class="lang-switch" role="group" aria-label="Language">
+              <button type="button" class="lang-btn active" data-lang-btn="en" aria-pressed="true">EN</button>
+              <button type="button" class="lang-btn" data-lang-btn="vi" aria-pressed="false">VN</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -592,12 +763,21 @@
 
   <header>
     <div class="container hero">
-      <div class="card hero-main">
-        <div class="eyebrow">🌿 Welcome to my little corner of the internet</div>
+      <div class="hero-main liquid-glass reveal">
+        <div class="eyebrow"
+             data-en="🌿 Welcome to my little corner of the internet"
+             data-vi="🌿 Chào mừng đến góc nhỏ của mình trên internet">
+          🌿 Welcome to my little corner of the internet
+        </div>
 
-        <h1>Hi, I'm <span class="orange">MilanVu.</span></h1>
+        <h1 data-en="Hi, I'm <span class='orange'>MilanVu.</span>"
+            data-vi="Xin chào, mình là <span class='orange'>MilanVu.</span>">
+          Hi, I'm <span class="orange">MilanVu.</span>
+        </h1>
 
-        <p class="lead">
+        <p class="lead"
+           data-en="I'm <strong>Nhật Minh</strong>, also known online as <strong>MilanVu</strong>. I'm from Vietnam 🇻🇳 and I'm interested in <strong>cybersecurity</strong>, <strong>coding</strong>, and exploring how technology works."
+           data-vi="Mình là <strong>Nhật Minh</strong>, được biết đến online với tên <strong>MilanVu</strong>. Mình đến từ Việt Nam 🇻🇳 và quan tâm đến <strong>an ninh mạng</strong>, <strong>lập trình</strong>, cùng việc khám phá cách công nghệ vận hành.">
           I'm <strong>Nhật Minh</strong>, also known online as
           <strong>MilanVu</strong>. I'm from Vietnam 🇻🇳 and I'm interested in
           <strong>cybersecurity</strong>, <strong>coding</strong>, and exploring
@@ -607,7 +787,8 @@
         <div class="buttons">
           <a class="btn primary" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
           <a class="btn" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
-          <a class="btn" href="https://t.me/denrindzwp" target="_blank" rel="noopener">💬 Telegram Group</a>
+          <a class="btn" href="https://t.me/denrindzwp" target="_blank" rel="noopener"
+             data-en="💬 Telegram Group" data-vi="💬 Nhóm Telegram">💬 Telegram Group</a>
           <a class="btn" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
           <a class="btn" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
         </div>
@@ -627,119 +808,131 @@ MilanVu
 <span class="key">Born</span>        : 2012
 
 <span class="cmd">$ focus</span>
-<span class="ok">Cybersecurity</span> + <span class="ok">Coding</span> + Curiosity 🐹</pre>
+<span class="ok">Cybersecurity</span> + <span class="ok">Coding</span> + Curiosity 🐹<span class="cursor"></span></pre>
         </div>
       </div>
 
-      <aside class="card capy-card">
-        <div class="capy-wrap">
+      <aside class="capy-card liquid-glass reveal">
+        <div class="capy-stage" id="capyStage" role="group" aria-label="Đàn capybara — di chuột để chúng chạy theo, click lên cỏ để cho ăn">
           <div class="sun"></div>
+          <span class="twinkle" style="left:46%;top:16%">✨</span>
+          <span class="twinkle t2" style="left:26%;top:26%">✨</span>
+          <div class="capy-hill"></div>
+          <div class="tufts" id="capyTufts"></div>
+          <div class="capy-hint" id="capyHint"
+               data-en="🖱️ Move your mouse in — they'll run to you.<br>🌿 Click the grass to feed them!"
+               data-vi="🖱️ Di chuột vào — chúng sẽ chạy theo.<br>🌿 Click lên cỏ để cho chúng ăn!">
+            🖱️ Move your mouse in — they'll run to you.<br>🌿 Click the grass to feed them!
+          </div>
+          <div class="capy-ring" id="capyRing"></div>
 
-          <svg class="capy-img" viewBox="0 0 460 300" role="img" aria-label="Đàn capybara gồm nhiều thành viên: đội nón rơm, đeo balo rùa, đội quả cam, nón tiệc và một capy con đang nằm nghỉ">
-            <!-- bóng đổ -->
-            <ellipse cx="100" cy="258" rx="62" ry="10" fill="#6b4a35" opacity=".10"/>
-            <ellipse cx="252" cy="282" rx="70" ry="11" fill="#6b4a35" opacity=".10"/>
-            <ellipse cx="388" cy="280" rx="40" ry="7" fill="#6b4a35" opacity=".10"/>
+          <div class="capy-layer" id="capyLayer">
+            <!-- A: mũ rơm + rùa -->
+            <div class="capy-actor a"><i class="shadow"></i><div class="bob">
+              <svg viewBox="36 130 160 130" aria-hidden="true">
+                <ellipse cx="78" cy="168" rx="36" ry="27" fill="#6faf5f"/>
+                <ellipse cx="78" cy="168" rx="36" ry="27" fill="none" stroke="#4e8a4a" stroke-width="4"/>
+                <ellipse cx="78" cy="168" rx="28" ry="19" fill="#8cc47a"/>
+                <polygon points="78,154 90,161 90,175 78,182 66,175 66,161" fill="none" stroke="#4e8a4a" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M108 166 Q122 188 118 214" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
+                <ellipse cx="96" cy="212" rx="55" ry="33" fill="#b87548"/>
+                <ellipse cx="99" cy="224" rx="45" ry="18" fill="#a26542" opacity=".55"/>
+                <rect x="64" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
+                <rect x="93" y="233" width="15" height="24" rx="7.5" fill="#a26542"/>
+                <rect x="121" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
+                <ellipse cx="156" cy="184" rx="30" ry="26" fill="#bd7a4c"/>
+                <circle cx="140" cy="160" r="6.5" fill="#9b603c"/>
+                <circle cx="170" cy="160" r="6.5" fill="#9b603c"/>
+                <circle cx="164" cy="180" r="3.4" fill="#3d291e"/>
+                <circle cx="165.3" cy="178.8" r="1.1" fill="#fff"/>
+                <ellipse cx="179" cy="194" rx="13" ry="10.5" fill="#a96a45"/>
+                <ellipse cx="184" cy="190.5" rx="3.6" ry="2.4" fill="#2f2018"/>
+                <ellipse cx="154" cy="156" rx="29" ry="8" fill="#e3bd6d"/>
+                <path d="M137 156 Q154 118 171 156 Z" fill="#f0d28a"/>
+                <path d="M141 149 Q154 141 167 149" fill="none" stroke="#c96f4a" stroke-width="5" stroke-linecap="round"/>
+              </svg>
+            </div></div>
 
-            <!-- CAPY TRÁI: nón rơm + balo rùa -->
-            <g>
-              <ellipse cx="78" cy="168" rx="36" ry="27" fill="#6faf5f"/>
-              <ellipse cx="78" cy="168" rx="36" ry="27" fill="none" stroke="#4e8a4a" stroke-width="4"/>
-              <ellipse cx="78" cy="168" rx="28" ry="19" fill="#8cc47a"/>
-              <polygon points="78,154 90,161 90,175 78,182 66,175 66,161" fill="none" stroke="#4e8a4a" stroke-width="2.5" stroke-linejoin="round"/>
-              <path d="M108 166 Q122 188 118 214" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
-              <ellipse cx="96" cy="212" rx="55" ry="33" fill="#b87548"/>
-              <ellipse cx="99" cy="224" rx="45" ry="18" fill="#a26542" opacity=".55"/>
-              <rect x="64" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
-              <rect x="93" y="233" width="15" height="24" rx="7.5" fill="#a26542"/>
-              <rect x="121" y="230" width="15" height="24" rx="7.5" fill="#a26542"/>
-              <ellipse cx="156" cy="184" rx="30" ry="26" fill="#bd7a4c"/>
-              <circle cx="140" cy="160" r="6.5" fill="#9b603c"/>
-              <circle cx="170" cy="160" r="6.5" fill="#9b603c"/>
-              <circle cx="164" cy="180" r="3.4" fill="#3d291e"/>
-              <circle cx="165.3" cy="178.8" r="1.1" fill="#fff"/>
-              <ellipse cx="179" cy="194" rx="13" ry="10.5" fill="#a96a45"/>
-              <ellipse cx="184" cy="190.5" rx="3.6" ry="2.4" fill="#2f2018"/>
-              <ellipse cx="154" cy="156" rx="29" ry="8" fill="#e3bd6d"/>
-              <path d="M137 156 Q154 118 171 156 Z" fill="#f0d28a"/>
-              <path d="M141 149 Q154 141 167 149" fill="none" stroke="#c96f4a" stroke-width="5" stroke-linecap="round"/>
-            </g>
+            <!-- B: quả cam trên đầu + rùa -->
+            <div class="capy-actor b"><i class="shadow"></i><div class="bob">
+              <svg viewBox="188 132 172 150" aria-hidden="true">
+                <ellipse cx="234" cy="184" rx="40" ry="30" fill="#5f9e57"/>
+                <ellipse cx="234" cy="184" rx="40" ry="30" fill="none" stroke="#447a41" stroke-width="4"/>
+                <ellipse cx="234" cy="184" rx="31" ry="21" fill="#7fb96e"/>
+                <polygon points="234,169 247,176 247,191 234,198 221,191 221,176" fill="none" stroke="#447a41" stroke-width="2.5" stroke-linejoin="round"/>
+                <circle cx="215" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
+                <circle cx="253" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
+                <path d="M266 176 Q280 198 276 226" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
+                <ellipse cx="250" cy="232" rx="58" ry="37" fill="#b87548"/>
+                <ellipse cx="253" cy="246" rx="49" ry="20" fill="#a26542" opacity=".55"/>
+                <rect x="214" y="252" width="16" height="26" rx="8" fill="#a26542"/>
+                <rect x="246" y="255" width="16" height="26" rx="8" fill="#a26542"/>
+                <rect x="278" y="252" width="16" height="26" rx="8" fill="#a26542"/>
+                <ellipse cx="318" cy="200" rx="33" ry="28" fill="#bd7a4c"/>
+                <circle cx="301" cy="174" r="7" fill="#9b603c"/>
+                <circle cx="333" cy="174" r="7" fill="#9b603c"/>
+                <ellipse cx="310" cy="212" rx="6" ry="3.5" fill="#ff9fba" opacity=".45"/>
+                <circle cx="327" cy="196" r="3.6" fill="#3d291e"/>
+                <circle cx="328.4" cy="194.6" r="1.2" fill="#fff"/>
+                <ellipse cx="342" cy="211" rx="14" ry="11" fill="#a96a45"/>
+                <ellipse cx="347" cy="207" rx="4" ry="2.6" fill="#2f2018"/>
+                <circle cx="318" cy="156" r="17" fill="#ffa04d"/>
+                <circle cx="313" cy="162" r="11" fill="#f08a35" opacity=".55"/>
+                <circle cx="313" cy="151" r="4.5" fill="#ffd8ad" opacity=".85"/>
+                <rect x="316" y="136" width="3.5" height="8" rx="1.75" fill="#8a5a3b"/>
+                <ellipse cx="327" cy="139" rx="6.5" ry="3" fill="#65ac62" transform="rotate(-24 327 139)"/>
+              </svg>
+            </div></div>
 
-            <!-- CAPY GIỮA: to nhất, quả cam trên đầu + balo rùa -->
-            <g>
-              <ellipse cx="234" cy="184" rx="40" ry="30" fill="#5f9e57"/>
-              <ellipse cx="234" cy="184" rx="40" ry="30" fill="none" stroke="#447a41" stroke-width="4"/>
-              <ellipse cx="234" cy="184" rx="31" ry="21" fill="#7fb96e"/>
-              <polygon points="234,169 247,176 247,191 234,198 221,191 221,176" fill="none" stroke="#447a41" stroke-width="2.5" stroke-linejoin="round"/>
-              <circle cx="215" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
-              <circle cx="253" cy="182" r="5" fill="none" stroke="#447a41" stroke-width="2"/>
-              <path d="M266 176 Q280 198 276 226" fill="none" stroke="#7a4f33" stroke-width="6" stroke-linecap="round"/>
-              <ellipse cx="250" cy="232" rx="58" ry="37" fill="#b87548"/>
-              <ellipse cx="253" cy="246" rx="49" ry="20" fill="#a26542" opacity=".55"/>
-              <rect x="214" y="252" width="16" height="26" rx="8" fill="#a26542"/>
-              <rect x="246" y="255" width="16" height="26" rx="8" fill="#a26542"/>
-              <rect x="278" y="252" width="16" height="26" rx="8" fill="#a26542"/>
-              <ellipse cx="318" cy="200" rx="33" ry="28" fill="#bd7a4c"/>
-              <circle cx="301" cy="174" r="7" fill="#9b603c"/>
-              <circle cx="333" cy="174" r="7" fill="#9b603c"/>
-              <ellipse cx="310" cy="212" rx="6" ry="3.5" fill="#ff9fba" opacity=".45"/>
-              <circle cx="327" cy="196" r="3.6" fill="#3d291e"/>
-              <circle cx="328.4" cy="194.6" r="1.2" fill="#fff"/>
-              <ellipse cx="342" cy="211" rx="14" ry="11" fill="#a96a45"/>
-              <ellipse cx="347" cy="207" rx="4" ry="2.6" fill="#2f2018"/>
-              <circle cx="318" cy="156" r="17" fill="#ffa04d"/>
-              <circle cx="313" cy="162" r="11" fill="#f08a35" opacity=".55"/>
-              <circle cx="313" cy="151" r="4.5" fill="#ffd8ad" opacity=".85"/>
-              <rect x="316" y="136" width="3.5" height="8" rx="1.75" fill="#8a5a3b"/>
-              <ellipse cx="327" cy="139" rx="6.5" ry="3" fill="#65ac62" transform="rotate(-24 327 139)"/>
-              <path d="M354 122 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 Z" fill="#ffd979"/>
-              <path d="M272 116 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z" fill="#ffd979" opacity=".8"/>
-            </g>
+            <!-- C: capybara nhỏ có chiếc lá trên đầu -->
+            <div class="capy-actor c"><i class="shadow"></i><div class="bob">
+              <svg viewBox="0 0 80 56" aria-hidden="true">
+                <ellipse cx="34" cy="38" rx="26" ry="15" fill="#c07e50"/>
+                <ellipse cx="35" cy="44" rx="21" ry="8" fill="#a26542" opacity=".5"/>
+                <rect x="16" y="44" width="9" height="10" rx="4.5" fill="#a26542"/>
+                <rect x="44" y="46" width="9" height="8" rx="4" fill="#a26542"/>
+                <ellipse cx="58" cy="30" rx="15" ry="13" fill="#c58457"/>
+                <circle cx="50" cy="19" r="4" fill="#9b603c"/>
+                <circle cx="66" cy="19" r="4" fill="#9b603c"/>
+                <ellipse cx="56" cy="36" rx="3.5" ry="2" fill="#ff9fba" opacity=".4"/>
+                <circle cx="62" cy="28" r="2.4" fill="#3d291e"/>
+                <circle cx="62.7" cy="27.2" r=".8" fill="#fff"/>
+                <ellipse cx="70" cy="35" rx="7" ry="5.5" fill="#a96a45"/>
+                <ellipse cx="72.5" cy="32.5" rx="2" ry="1.4" fill="#2f2018"/>
+                <rect x="57" y="14" width="2" height="5" rx="1" fill="#8a5a3b"/>
+                <ellipse cx="61" cy="13" rx="6" ry="3" fill="#65ac62" transform="rotate(-20 61 13)"/>
+              </svg>
+            </div></div>
 
-            <!-- CAPY CON: đang nằm nghỉ -->
-            <g>
-              <ellipse cx="196" cy="262" rx="24" ry="13" fill="#c07e50"/>
-              <circle cx="176" cy="248" r="4.5" fill="#9b603c"/>
-              <ellipse cx="181" cy="251" rx="14" ry="11" fill="#c58457"/>
-              <circle cx="185" cy="254" r="2.2" fill="#3d291e"/>
-              <ellipse cx="190" cy="258" rx="4.5" ry="3" fill="#a96a45"/>
-              <ellipse cx="191.5" cy="256.8" rx="1.5" ry="1" fill="#2f2018"/>
-            </g>
-
-            <!-- CAPY NHỎ: nón tiệc mini -->
-            <g>
-              <ellipse cx="368" cy="238" rx="15" ry="11" fill="#6faf5f"/>
-              <ellipse cx="368" cy="238" rx="15" ry="11" fill="none" stroke="#4e8a4a" stroke-width="2.5"/>
-              <ellipse cx="380" cy="250" rx="33" ry="21" fill="#c07e50"/>
-              <rect x="362" y="260" width="11" height="17" rx="5.5" fill="#a26542"/>
-              <rect x="388" y="262" width="11" height="17" rx="5.5" fill="#a26542"/>
-              <ellipse cx="412" cy="232" rx="20" ry="17" fill="#c58457"/>
-              <circle cx="403" cy="217" r="4.5" fill="#9b603c"/>
-              <circle cx="421" cy="217" r="4.5" fill="#9b603c"/>
-              <circle cx="418" cy="230" r="2.6" fill="#3d291e"/>
-              <circle cx="418.9" cy="229" r=".9" fill="#fff"/>
-              <ellipse cx="425" cy="238" rx="8" ry="6.5" fill="#a96a45"/>
-              <ellipse cx="428" cy="235.5" rx="2.4" ry="1.6" fill="#2f2018"/>
-              <path d="M402 218 L412 190 L422 218 Z" fill="#ff8ea8"/>
-              <circle cx="409" cy="210" r="2" fill="#fff"/>
-              <circle cx="414" cy="203" r="2" fill="#fff"/>
-              <circle cx="412" cy="216" r="2" fill="#fff" opacity=".9"/>
-              <circle cx="412" cy="189" r="3.5" fill="#ffd979"/>
-            </g>
-
-            <!-- cỏ -->
-            <g stroke="#77c88a" stroke-width="2.5" stroke-linecap="round" fill="none">
-              <path d="M30 292 q3 -12 6 0 M39 292 q3 -9 6 0"/>
-              <path d="M150 296 q3 -12 6 0 M159 296 q3 -9 6 0"/>
-              <path d="M300 296 q3 -12 6 0 M309 296 q3 -9 6 0"/>
-              <path d="M436 290 q3 -12 6 0 M445 290 q3 -9 6 0"/>
-            </g>
-          </svg>
+            <!-- D: nón sinh nhật + rùa -->
+            <div class="capy-actor d"><i class="shadow"></i><div class="bob">
+              <svg viewBox="344 183 92 98" aria-hidden="true">
+                <ellipse cx="368" cy="238" rx="15" ry="11" fill="#6faf5f"/>
+                <ellipse cx="368" cy="238" rx="15" ry="11" fill="none" stroke="#4e8a4a" stroke-width="2.5"/>
+                <ellipse cx="380" cy="250" rx="33" ry="21" fill="#c07e50"/>
+                <rect x="362" y="260" width="11" height="17" rx="5.5" fill="#a26542"/>
+                <rect x="388" y="262" width="11" height="17" rx="5.5" fill="#a26542"/>
+                <ellipse cx="412" cy="232" rx="20" ry="17" fill="#c58457"/>
+                <circle cx="403" cy="217" r="4.5" fill="#9b603c"/>
+                <circle cx="421" cy="217" r="4.5" fill="#9b603c"/>
+                <circle cx="418" cy="230" r="2.6" fill="#3d291e"/>
+                <circle cx="418.9" cy="229" r=".9" fill="#fff"/>
+                <ellipse cx="425" cy="238" rx="8" ry="6.5" fill="#a96a45"/>
+                <ellipse cx="428" cy="235.5" rx="2.4" ry="1.6" fill="#2f2018"/>
+                <path d="M402 218 L412 190 L422 218 Z" fill="#ff8ea8"/>
+                <circle cx="409" cy="210" r="2" fill="#fff"/>
+                <circle cx="414" cy="203" r="2" fill="#fff"/>
+                <circle cx="412" cy="216" r="2" fill="#fff" opacity=".9"/>
+                <circle cx="412" cy="189" r="3.5" fill="#ffd979"/>
+              </svg>
+            </div></div>
+          </div>
         </div>
 
         <div class="capy-caption">
-          <h2>Chill like a capybara.</h2>
-          <p>Code. Learn. Explore. Stay curious. 🌱</p>
+          <h2 data-en="Chill like a capybara." data-vi="Thư giãn như capybara.">Chill like a capybara.</h2>
+          <p data-en="Code. Learn. Explore. Stay curious. 🌱"
+             data-vi="Code. Học hỏi. Khám phá. Luôn tò mò. 🌱">Code. Learn. Explore. Stay curious. 🌱</p>
         </div>
       </aside>
     </div>
@@ -747,12 +940,17 @@ MilanVu
 
   <main class="container">
     <section id="about">
-      <div class="section-head">
-        <h2>About me</h2>
-        <p>A simple introduction behind the name <strong>MilanVu</strong>.</p>
+      <div class="section-head reveal">
+        <h2 data-en="About me" data-vi="Về mình">About me</h2>
+        <p data-en="A simple introduction behind the name <strong>MilanVu</strong>."
+           data-vi="Đôi dòng giới thiệu về cái tên <strong>MilanVu</strong>.">
+          A simple introduction behind the name <strong>MilanVu</strong>.
+        </p>
       </div>
 
-      <div class="card about">
+      <div class="about liquid-glass reveal"
+           data-en="My name is <strong>Nhật Minh</strong>, but online I go by <strong>MilanVu</strong>. I'm a young developer from Vietnam who enjoys <strong>cybersecurity</strong>, <strong>programming</strong>, and experimenting with technology. I like understanding how systems work, building projects, testing ideas, and learning from every mistake."
+           data-vi="Mình tên là <strong>Nhật Minh</strong>, còn trên mạng mình dùng tên <strong>MilanVu</strong>. Mình là một developer trẻ đến từ Việt Nam, thích <strong>an ninh mạng</strong>, <strong>lập trình</strong> và thử nghiệm công nghệ. Mình thích tìm hiểu cách hệ thống vận hành, xây dựng dự án, thử nghiệm ý tưởng và học từ mỗi sai lầm.">
         My name is <strong>Nhật Minh</strong>, but online I go by
         <strong>MilanVu</strong>. I'm a young developer from Vietnam who enjoys
         <strong>cybersecurity</strong>, <strong>programming</strong>, and
@@ -760,7 +958,9 @@ MilanVu
         building projects, testing ideas, and learning from every mistake.
       </div>
 
-      <div class="card about" style="margin-top:13px;">
+      <div class="about liquid-glass reveal" style="margin-top:13px;"
+           data-en="I was born in <strong>2012</strong>. That may sound surprising to some people because this is still a relatively young age to be seriously interested in coding and cybersecurity. But that's part of my story: I started exploring technology early, and I'm still learning every day."
+           data-vi="Mình sinh năm <strong>2012</strong>. Điều này có thể khiến vài người bất ngờ, vì đây vẫn là độ tuổi khá trẻ để nghiêm túc với lập trình và an ninh mạng. Nhưng đó là một phần câu chuyện của mình: mình bắt đầu khám phá công nghệ từ sớm, và vẫn đang học mỗi ngày.">
         I was born in <strong>2012</strong>. That may sound surprising to some
         people because this is still a relatively young age to be seriously
         interested in coding and cybersecurity. But that's part of my story:
@@ -769,34 +969,38 @@ MilanVu
     </section>
 
     <section id="interests">
-      <div class="section-head">
-        <h2>What I do</h2>
-        <p>The things I'm most curious about right now.</p>
+      <div class="section-head reveal">
+        <h2 data-en="What I do" data-vi="Mình làm gì">What I do</h2>
+        <p data-en="The things I'm most curious about right now."
+           data-vi="Những điều mình tò mò nhất hiện tại.">The things I'm most curious about right now.</p>
       </div>
 
       <div class="grid-3">
-        <article class="card info">
+        <article class="info liquid-glass reveal">
           <div class="emoji">🛡️</div>
-          <h3>Cybersecurity</h3>
-          <p>
+          <h3 data-en="Cybersecurity" data-vi="An ninh mạng">Cybersecurity</h3>
+          <p data-en="Exploring security concepts, vulnerabilities, operating systems, and the ideas behind making digital systems safer."
+             data-vi="Tìm hiểu các khái niệm bảo mật, lỗ hổng, hệ điều hành và những ý tưởng giúp hệ thống số an toàn hơn.">
             Exploring security concepts, vulnerabilities, operating systems,
             and the ideas behind making digital systems safer.
           </p>
         </article>
 
-        <article class="card info">
+        <article class="info liquid-glass reveal">
           <div class="emoji">💻</div>
-          <h3>Coding</h3>
-          <p>
+          <h3 data-en="Coding" data-vi="Lập trình">Coding</h3>
+          <p data-en="Writing projects, debugging problems, experimenting with software, and learning by actually building things."
+             data-vi="Viết dự án, gỡ lỗi, thử nghiệm phần mềm và học bằng cách thực sự xây dựng mọi thứ.">
             Writing projects, debugging problems, experimenting with software,
             and learning by actually building things.
           </p>
         </article>
 
-        <article class="card info">
+        <article class="info liquid-glass reveal">
           <div class="emoji">🔍</div>
-          <h3>Tech Exploration</h3>
-          <p>
+          <h3 data-en="Tech Exploration" data-vi="Khám phá công nghệ">Tech Exploration</h3>
+          <p data-en="I enjoy taking technology apart conceptually and figuring out how different devices, systems, and tools work together."
+             data-vi="Mình thích mổ xẻ công nghệ về mặt ý tưởng và tìm hiểu cách các thiết bị, hệ thống và công cụ phối hợp với nhau.">
             I enjoy taking technology apart conceptually and figuring out how
             different devices, systems, and tools work together.
           </p>
@@ -804,140 +1008,40 @@ MilanVu
       </div>
     </section>
 
-    <section id="gang">
-      <div class="section-head">
-        <h2>The capybara gang</h2>
-        <p>My little team — they supervise everything I build. 🐹</p>
-      </div>
-
-      <div class="gang">
-        <figure class="card gang-card">
-          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara coder với laptop">
-            <use href="#capy-base"/>
-            <path d="M-28 -12 q7 6 14 0 M14 -12 q7 6 14 0" stroke="#3d291e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-            <rect x="-34" y="6" width="68" height="30" rx="5" fill="#5c402f"/>
-            <rect x="-28" y="12" width="56" height="18" rx="3" fill="#20301d"/>
-            <path d="M-20 17 h16 M-20 23 h26 M-20 27 h12" stroke="#7ee08a" stroke-width="3" stroke-linecap="round"/>
-            <rect x="-44" y="35" width="88" height="9" rx="4" fill="#8e654b"/>
-          </svg>
-          <figcaption><strong>Coder Capy</strong><span>always debugging something 💻</span></figcaption>
-        </figure>
-
-        <figure class="card gang-card">
-          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara bảo mật đeo kính đen và khiên">
-            <use href="#capy-base"/>
-            <rect x="-42" y="-22" width="36" height="22" rx="9" fill="#2f2018"/>
-            <rect x="6" y="-22" width="36" height="22" rx="9" fill="#2f2018"/>
-            <rect x="-8" y="-15" width="16" height="5" fill="#2f2018"/>
-            <path d="M-42 -12 L-54 -17 M42 -12 L54 -17" stroke="#2f2018" stroke-width="4" stroke-linecap="round"/>
-            <path d="M-10 25 q10 7 20 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path d="M0 34 l17 6 v13 q0 10 -17 13 q-17 -3 -17 -13 v-13 Z" fill="#58a870" stroke="#4e8a4a" stroke-width="2.5" stroke-linejoin="round"/>
-            <path d="M-8 52 l6 6 11 -11" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <figcaption><strong>Shield Capy</strong><span>keeps the burrow safe 🛡️</span></figcaption>
-        </figure>
-
-        <figure class="card gang-card">
-          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara đội quả cam trên đầu">
-            <use href="#capy-base"/>
-            <circle cx="0" cy="-42" r="15" fill="#ffa04d"/>
-            <circle cx="-5" cy="-47" r="4" fill="#ffd8ad" opacity=".85"/>
-            <ellipse cx="11" cy="-55" rx="7" ry="3.2" fill="#65ac62" transform="rotate(-20 11 -55)"/>
-            <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
-            <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
-            <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
-            <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
-            <ellipse cx="-33" cy="4" rx="7" ry="4" fill="#ff9fba" opacity=".4"/>
-            <ellipse cx="33" cy="4" rx="7" ry="4" fill="#ff9fba" opacity=".4"/>
-            <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          </svg>
-          <figcaption><strong>Orange Capy</strong><span>snack time, always 🍊</span></figcaption>
-        </figure>
-
-        <figure class="card gang-card">
-          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara DJ đeo tai nghe đang hát">
-            <use href="#capy-base"/>
-            <path d="M-48 -20 Q-48 -56 0 -56 Q48 -56 48 -20" stroke="#5c402f" stroke-width="9" fill="none"/>
-            <rect x="-58" y="-26" width="20" height="32" rx="9" fill="#5c402f"/>
-            <rect x="38" y="-26" width="20" height="32" rx="9" fill="#5c402f"/>
-            <rect x="-54" y="-21" width="12" height="22" rx="6" fill="#8e654b"/>
-            <rect x="42" y="-21" width="12" height="22" rx="6" fill="#8e654b"/>
-            <path d="M-28 -8 q7 7 14 0 M14 -8 q7 7 14 0" stroke="#3d291e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-            <ellipse cx="0" cy="24" rx="9" ry="8" fill="#5c2f22"/>
-            <ellipse cx="0" cy="27" rx="5" ry="3.5" fill="#ff8ea8"/>
-            <path d="M40 -34 V-52 M40 -52 q8 2 10 -6" stroke="#e88c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <ellipse cx="36.5" cy="-34" rx="5" ry="3.8" fill="#e88c3e"/>
-            <path d="M-44 -40 V-54 M-44 -54 q7 2 9 -5" stroke="#e88c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <ellipse cx="-47.5" cy="-40" rx="4.5" ry="3.4" fill="#e88c3e"/>
-          </svg>
-          <figcaption><strong>DJ Capy</strong><span>lo-fi beats to chill to 🎵</span></figcaption>
-        </figure>
-
-        <figure class="card gang-card">
-          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara đang ngâm mình trong bồn tắm gỗ với lát cam">
-            <use href="#capy-base"/>
-            <path d="M-28 -8 q7 6 14 0 M14 -8 q7 6 14 0" stroke="#3d291e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-            <path d="M-9 20 q9 6 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <circle cx="-30" cy="-50" r="6" fill="#fff" opacity=".5"/>
-            <circle cx="-16" cy="-58" r="4" fill="#fff" opacity=".5"/>
-            <circle cx="26" cy="-54" r="5" fill="#fff" opacity=".5"/>
-            <rect x="-46" y="36" width="92" height="30" rx="10" fill="#b87548"/>
-            <path d="M-23 40 v22 M0 40 v22 M23 40 v22" stroke="#a26542" stroke-width="3"/>
-            <rect x="-52" y="26" width="104" height="12" rx="6" fill="#a26542"/>
-            <circle cx="40" cy="22" r="9" fill="#ffa04d"/>
-            <path d="M40 14 v16 M32 22 h16" stroke="#fff8df" stroke-width="2"/>
-          </svg>
-          <figcaption><strong>Tub Capy</strong><span>professional relaxer ♨️</span></figcaption>
-        </figure>
-
-        <figure class="card gang-card">
-          <svg viewBox="-62 -64 124 132" role="img" aria-label="Capybara thám hiểm đội nón rơm">
-            <use href="#capy-base"/>
-            <circle cx="-22" cy="-8" r="5" fill="#3d291e"/>
-            <circle cx="22" cy="-8" r="5" fill="#3d291e"/>
-            <circle cx="-20.4" cy="-9.6" r="1.6" fill="#fff"/>
-            <circle cx="23.6" cy="-9.6" r="1.6" fill="#fff"/>
-            <path d="M-9 22 q9 7 18 0" stroke="#2f2018" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <ellipse cx="0" cy="-34" rx="48" ry="10" fill="#e3bd6d"/>
-            <path d="M-26 -34 Q0 -62 26 -34 Z" fill="#f0d28a"/>
-            <path d="M-19 -38 Q0 -47 19 -38" stroke="#c96f4a" stroke-width="5" fill="none" stroke-linecap="round"/>
-          </svg>
-          <figcaption><strong>Scout Capy</strong><span>exploring the backyard 🧭</span></figcaption>
-        </figure>
-      </div>
-    </section>
-
     <section id="skills">
-      <div class="section-head">
-        <h2>Core interests</h2>
-        <p>Topics I want my profile to be associated with.</p>
+      <div class="section-head reveal">
+        <h2 data-en="Core interests" data-vi="Mối quan tâm chính">Core interests</h2>
+        <p data-en="Topics I want my profile to be associated with."
+           data-vi="Những chủ đề mình muốn gắn với trang cá nhân này.">Topics I want my profile to be associated with.</p>
       </div>
 
-      <div class="card skills">
-        <span class="pill">Cybersecurity</span>
-        <span class="pill">Programming</span>
-        <span class="pill">Software Development</span>
-        <span class="pill">Security Research</span>
-        <span class="pill">Operating Systems</span>
-        <span class="pill">Problem Solving</span>
-        <span class="pill">Technology</span>
-        <span class="pill">Continuous Learning</span>
+      <div class="skills liquid-glass reveal">
+        <span class="pill" data-en="Cybersecurity" data-vi="An ninh mạng">Cybersecurity</span>
+        <span class="pill" data-en="Programming" data-vi="Lập trình">Programming</span>
+        <span class="pill" data-en="Software Development" data-vi="Phát triển phần mềm">Software Development</span>
+        <span class="pill" data-en="Security Research" data-vi="Nghiên cứu bảo mật">Security Research</span>
+        <span class="pill" data-en="Operating Systems" data-vi="Hệ điều hành">Operating Systems</span>
+        <span class="pill" data-en="Problem Solving" data-vi="Giải quyết vấn đề">Problem Solving</span>
+        <span class="pill" data-en="Technology" data-vi="Công nghệ">Technology</span>
+        <span class="pill" data-en="Continuous Learning" data-vi="Học hỏi liên tục">Continuous Learning</span>
         <span class="pill">GitHub</span>
       </div>
     </section>
 
     <section id="socials">
-      <div class="section-head">
-        <h2>Find me online</h2>
-        <p>These are my public profiles and places where I share my work.</p>
+      <div class="section-head reveal">
+        <h2 data-en="Find me online" data-vi="Tìm mình trên mạng">Find me online</h2>
+        <p data-en="These are my public profiles and places where I share my work."
+           data-vi="Đây là các trang cá nhân công khai và nơi mình chia sẻ công việc.">These are my public profiles and places where I share my work.</p>
       </div>
 
       <div class="socials">
-        <a class="social github" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
-        <a class="social telegram" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
-        <a class="social telegram-group" href="https://t.me/denrindzwp" target="_blank" rel="noopener">💬 Telegram Group</a>
-        <a class="social tiktok" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
-        <a class="social facebook" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
+        <a class="social liquid-glass reveal" href="https://github.com/milanvudev" target="_blank" rel="noopener">🐙 GitHub</a>
+        <a class="social liquid-glass reveal" href="http://t.me/milanvudev" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="social liquid-glass reveal" href="https://t.me/denrindzwp" target="_blank" rel="noopener"
+           data-en="💬 Telegram Group" data-vi="💬 Nhóm Telegram">💬 Telegram Group</a>
+        <a class="social liquid-glass reveal" href="https://www.tiktok.com/@milanvudev" target="_blank" rel="noopener">🎵 TikTok</a>
+        <a class="social liquid-glass reveal" href="https://www.facebook.com/milanvudev" target="_blank" rel="noopener">📘 Facebook</a>
       </div>
     </section>
   </main>
@@ -957,9 +1061,612 @@ MilanVu
           <use href="#capy-face"/>
         </g>
       </svg>
-      <span class="capy-mini">🐹</span>
-      Built with curiosity by <strong>MilanVu</strong> • Vietnam 🇻🇳
+      
+      <div style="margin-bottom: 12px;">
+        <span class="capy-mini">🐹</span>
+        <span data-en="Built with curiosity by <strong>MilanVu</strong> • Vietnam 🇻🇳"
+              data-vi="Được tạo bằng sự tò mò bởi <strong>MilanVu</strong> • Việt Nam 🇻🇳">
+          Built with curiosity by <strong>MilanVu</strong> • Vietnam 🇻🇳
+        </span>
+      </div>
+
+      <!-- Bộ đếm lượt xem -->
+      <div class="view-counter liquid-glass">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        <strong id="viewCountNum">...</strong>
+        <span data-en="views" data-vi="lượt xem">views</span>
+      </div>
     </div>
   </footer>
+
+  <button class="to-top" id="toTop" type="button" aria-label="Back to top">🐹</button>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var root = document.documentElement;
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ================= 1. LOADER ================= */
+      var loader = document.getElementById('loader');
+      var loaderHidden = false;
+
+      function hideLoader() {
+        if (loaderHidden) return;
+        loaderHidden = true;
+        setTimeout(function () {
+          if (loader) loader.classList.add('hide');
+          document.body.classList.remove('loading');
+          setTimeout(function () {
+            if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+          }, 600);
+        }, reduceMotion ? 100 : 500);
+      }
+      window.addEventListener('load', hideLoader);
+      setTimeout(hideLoader, 2500);
+
+      /* ================= 2. THEME TOGGLE ================= */
+      var themeBtn = document.getElementById('themeBtn');
+      var themeSkyIcon = document.getElementById('themeSkyIcon');
+      var currentTheme = 'light';
+      try { currentTheme = localStorage.getItem('milanvu-theme') || 'light'; } catch (e) {}
+      var isSwitchingTheme = false;
+
+      function applyTheme(theme) {
+        currentTheme = theme;
+        if (theme === 'dark') {
+          root.setAttribute('data-theme', 'dark');
+          themeBtn.textContent = '☀️';
+          themeSkyIcon.textContent = '☀️';
+        } else {
+          root.removeAttribute('data-theme');
+          themeBtn.textContent = '🌙';
+          themeSkyIcon.textContent = '🌙';
+        }
+        try { localStorage.setItem('milanvu-theme', theme); } catch (e) {}
+      }
+      applyTheme(currentTheme);
+
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          if (isSwitchingTheme) return;
+          isSwitchingTheme = true;
+          document.body.classList.add('theme-switching');
+
+          var nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+          themeSkyIcon.textContent = nextTheme === 'dark' ? '☀️' : '🌙';
+
+          setTimeout(function () {
+            applyTheme(nextTheme);
+          }, reduceMotion ? 50 : 600);
+
+          setTimeout(function () {
+            document.body.classList.remove('theme-switching');
+            isSwitchingTheme = false;
+          }, reduceMotion ? 100 : 1600);
+        });
+      }
+
+      /* ================= 3. LANGUAGE SWITCH ================= */
+      var STORAGE_KEY = 'milanvu-lang';
+      var currentLang = 'en';
+      var isSwitchingLang = false;
+
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === 'vi' || saved === 'en') currentLang = saved;
+      } catch (e) {}
+
+      function applyLang(lang) {
+        currentLang = (lang === 'vi') ? 'vi' : 'en';
+        root.setAttribute('lang', currentLang);
+
+        document.querySelectorAll('[data-en]').forEach(function (el) {
+          var value = el.getAttribute('data-' + currentLang);
+          if (value !== null) el.innerHTML = value;
+        });
+
+        document.querySelectorAll('[data-lang-btn]').forEach(function (btn) {
+          var isActive = btn.getAttribute('data-lang-btn') === currentLang;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        document.title = currentLang === 'vi' ? 'MilanVu — Góc Capybara 🐹' : 'MilanVu — Capybara Corner 🐹';
+        try { localStorage.setItem(STORAGE_KEY, currentLang); } catch (e) {}
+      }
+      applyLang(currentLang);
+
+      document.querySelectorAll('[data-lang-btn]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = btn.getAttribute('data-lang-btn');
+          if (lang === currentLang || isSwitchingLang) return;
+          isSwitchingLang = true;
+          document.body.classList.add('lang-switching');
+
+          setTimeout(function () {
+            applyLang(lang);
+            setTimeout(function () {
+              document.body.classList.remove('lang-switching');
+              isSwitchingLang = false;
+            }, reduceMotion ? 50 : 350);
+          }, reduceMotion ? 50 : 300);
+        });
+      });
+
+      /* ================= 4. VIEW COUNTER ================= */
+      function initViewCounter() {
+        var numEl = document.getElementById('viewCountNum');
+        if (!numEl) return;
+        var box = numEl.closest('.view-counter');
+        var NS = 'milanvudev', KEY = 'capy-corner';
+
+        var seen = false;
+        try { seen = sessionStorage.getItem('milanvu_visited') === 'true'; } catch (e) {}
+
+        function getJSON(url) {
+          var ctrl = ('AbortController' in window) ? new AbortController() : null;
+          var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 7000);
+          return fetch(url, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+            .then(function (res) {
+              clearTimeout(timer);
+              if (!res.ok) throw new Error('HTTP ' + res.status);
+              return res.json();
+            }, function (err) { clearTimeout(timer); throw err; });
+        }
+
+        // counterapi.dev trả về "count", abacus trả về "value" -> đọc được cả hai
+        function toCount(d) {
+          var n = d && (typeof d.count === 'number' ? d.count : d.value);
+          if (typeof n !== 'number' || !isFinite(n)) throw new Error('Bad response');
+          return n;
+        }
+
+        var providers = [
+          function () { return getJSON('https://api.counterapi.dev/v1/' + NS + '/' + KEY + (seen ? '' : '/up')); },
+          function () { return getJSON('https://abacus.jasoncameron.dev/' + (seen ? 'get/' : 'hit/') + NS + '/' + KEY); }
+        ];
+
+        function run(i) {
+          if (i >= providers.length) return Promise.reject(new Error('All counters failed'));
+          return providers[i]().then(toCount).catch(function (err) {
+            console.warn('View counter provider ' + (i + 1) + ' failed:', err);
+            return run(i + 1);
+          });
+        }
+
+        run(0).then(function (n) {
+          numEl.textContent = n.toLocaleString();
+          if (!seen) { try { sessionStorage.setItem('milanvu_visited', 'true'); } catch (e) {} }
+        }).catch(function () {
+          if (box) box.classList.add('is-off');   // không hiện '---' xấu nữa
+        });
+      }
+      initViewCounter();
+
+/* ================= 5. SCROLL PROGRESS + BACK TO TOP ================= */
+      var progressBar = document.getElementById('progressBar');
+      var toTop = document.getElementById('toTop');
+      var ticking = false;
+
+      function onScroll() {
+        var doc = document.documentElement;
+        var scrollTop = window.pageYOffset || doc.scrollTop;
+        var max = (doc.scrollHeight - doc.clientHeight) || 1;
+        var percent = Math.min(100, Math.max(0, (scrollTop / max) * 100));
+
+        if (progressBar) progressBar.style.width = percent + '%';
+        if (toTop) toTop.classList.toggle('show', scrollTop > 420);
+
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(onScroll);
+        }
+      }, { passive: true });
+      onScroll();
+
+      if (toTop) {
+        toTop.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+        });
+      }
+
+      /* ================= 6. REVEAL ON SCROLL ================= */
+      var revealEls = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !reduceMotion) {
+        var revealObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+        revealEls.forEach(function (el) { revealObserver.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('in'); });
+      }
+
+      /* ================= 7. ACTIVE NAV LINK ================= */
+      var sections = document.querySelectorAll('main section[id]');
+      var navLinks = document.querySelectorAll('.nav-links a');
+
+      if ('IntersectionObserver' in window) {
+        var navObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var id = '#' + entry.target.id;
+              navLinks.forEach(function (link) {
+                link.classList.toggle('active', link.getAttribute('href') === id);
+              });
+            }
+          });
+        }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+        sections.forEach(function (s) { navObserver.observe(s); });
+      }
+
+      /* ================= 8. CLICK SPARKLES ================= */
+      var sparkChars = ['🐹', '✨'];
+      function spawnSparkles(x, y) {
+        if (reduceMotion) return;
+        for (var i = 0; i < 2; i++) {
+          (function (index) {
+            var spark = document.createElement('span');
+            spark.className = 'spark';
+            spark.textContent = sparkChars[Math.floor(Math.random() * sparkChars.length)];
+            spark.style.left = x + 'px';
+            spark.style.top = y + 'px';
+            spark.style.fontSize = (14 + Math.random() * 8) + 'px';
+
+            var dx = (Math.random() - 0.5) * 80;
+            var dy = -30 - Math.random() * 50;
+
+            spark.style.setProperty('--dx', dx + 'px');
+            spark.style.setProperty('--dy', dy + 'px');
+            spark.style.animationDelay = (index * 0.05) + 's';
+
+            document.body.appendChild(spark);
+            setTimeout(function () {
+              if (spark.parentNode) spark.parentNode.removeChild(spark);
+            }, 800);
+          })(i);
+        }
+      }
+
+      document.addEventListener('click', function (event) {
+        var target = event.target.closest('.btn, .social, .lang-btn, .to-top, .pill, .theme-btn');
+        if (!target) return;
+        spawnSparkles(event.clientX, event.clientY);
+      });
+    })();
+  </script>
+<script>
+  /* ================= CAPYBARA PLAYGROUND ================= */
+  (function () {
+    'use strict';
+
+    var stage = document.getElementById('capyStage');
+    if (!stage) return;
+
+    var layer = document.getElementById('capyLayer');
+    var ring = document.getElementById('capyRing');
+    var hint = document.getElementById('capyHint');
+    var tufts = document.getElementById('capyTufts');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var RUN = 230, WALK = 34, BITE_T = 0.75, MAX_FOOD = 8;
+    var FOODS = ['🌿', '🌾', '🍀', '🥬'];
+
+    var W = 0, H = 0, GT = 0, GB = 0, U = 1;
+    var cursor = { inside: false, x: 0, y: 0 };
+    var foods = [];
+
+    function rand(a, b) { return a + Math.random() * (b - a); }
+    function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+    function scaleAt(y) { return 0.82 + 0.26 * clamp((y - GT) / ((GB - GT) || 1), 0, 1); }
+
+    /* cỏ trang trí */
+    [[8,64],[22,88],[38,70],[55,92],[68,66],[82,86],[92,72],[14,78],[46,81],[74,95],[30,96],[60,76]].forEach(function (p) {
+      var t = document.createElement('span');
+      t.className = 'tuft';
+      t.style.left = p[0] + '%'; t.style.top = p[1] + '%';
+      t.innerHTML = '<svg viewBox="0 0 16 10"><path d="M1 10 q2 -9 4 0 M6 10 q3 -12 6 0 M11 10 q2 -7 4 0"/></svg>';
+      tufts.appendChild(t);
+    });
+
+    /* mỗi con có chỗ "nhà" và vị trí đứng cạnh con trỏ riêng */
+    var cfg = [
+      { home: [0.22, 0.76], fdx: -64,  fdy: 4 },
+      { home: [0.52, 0.86], fdx: 70,   fdy: 10 },
+      { home: [0.34, 0.93], fdx: -122, fdy: 20 },
+      { home: [0.80, 0.78], fdx: 122,  fdy: -8 }
+    ];
+
+    var actors = Array.prototype.map.call(layer.querySelectorAll('.capy-actor'), function (el, i) {
+      var c = cfg[i] || cfg[0];
+      return {
+        el: el, bob: el.querySelector('.bob'), home: c.home, fdx: c.fdx, fdy: c.fdy,
+        x: 0, y: 0, w: 100, h: 80, face: 1, flip: 1, vel: 0,
+        phase: rand(0, 6), breath: rand(0, 6),
+        state: 'idle', food: null, side: 1, eatT: 0, happyT: 0, wt: null, wait: rand(0.3, 2.5)
+      };
+    });
+
+    function measure() {
+      var r = stage.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      var oldW = W, oldH = H;
+      W = r.width; H = r.height;
+      U = clamp(W / 430, 0.72, 1.15);
+      stage.style.setProperty('--u', U.toFixed(3));
+      GT = H * 0.56; GB = H * 0.95;
+      actors.forEach(function (a) {
+        a.w = a.el.offsetWidth; a.h = a.el.offsetHeight;
+        if (oldW) { a.x *= W / oldW; a.y *= H / oldH; }
+        else { a.x = a.home[0] * W; a.y = a.home[1] * H; }
+        a.y = clamp(a.y, GT, GB);
+      });
+      if (oldW) {
+        foods.forEach(function (f) {
+          f.x *= W / oldW; f.y = clamp(f.y * H / oldH, GT, GB);
+          f.el.style.left = f.x + 'px'; f.el.style.top = f.y + 'px';
+        });
+      }
+    }
+
+    /* ---------- hiệu ứng ---------- */
+    function pop(x, y, ch) {
+      var el = document.createElement('span');
+      el.className = 'pop'; el.textContent = ch;
+      el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.zIndex = 999;
+      layer.appendChild(el);
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1000);
+    }
+    function ripple(x, y) {
+      var el = document.createElement('span');
+      el.className = 'ripple';
+      el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.zIndex = 998;
+      layer.appendChild(el);
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 650);
+    }
+
+    /* ---------- thức ăn ---------- */
+    function removeFood(f) {
+      var k = foods.indexOf(f);
+      if (k >= 0) foods.splice(k, 1);
+      if (f.owner) {
+        f.owner.food = null;
+        if (f.owner.state === 'toFood' || f.owner.state === 'eating') f.owner.state = 'idle';
+        f.owner = null;
+      }
+      if (f.el.parentNode) f.el.parentNode.removeChild(f.el);
+    }
+
+    function dropFood(x, y) {
+      ripple(x, y);
+      x = clamp(x, 18, W - 18);
+      y = clamp(y, GT + 4, GB);
+      if (foods.length >= MAX_FOOD) removeFood(foods[0]);
+
+      var el = document.createElement('div');
+      el.className = 'food';
+      el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.zIndex = Math.round(y) - 1;
+      var ico = document.createElement('span');
+      ico.className = 'food-ico';
+      ico.textContent = FOODS[Math.floor(Math.random() * FOODS.length)];
+      el.appendChild(ico);
+      layer.appendChild(el);
+      foods.push({ el: el, ico: ico, x: x, y: y, bites: 0, owner: null });
+    }
+
+    function finishEating(a) {
+      var f = a.food;
+      a.food = null;
+      a.state = 'happy';
+      a.happyT = 0.9;
+      if (f) { f.owner = null; removeFood(f); }
+      var s = scaleAt(a.y);
+      pop(a.x + a.face * a.w * 0.2 * s, a.y - a.h * s * 0.85, '💚');
+    }
+
+    /* ---------- cập nhật logic ---------- */
+    var wasInside = false;
+
+    function update(dt) {
+      if (wasInside && !cursor.inside) {
+        actors.forEach(function (a) { a.wt = null; a.wait = rand(0.2, 1.2); });
+      }
+      wasInside = cursor.inside;
+
+      /* giao thức ăn cho con rảnh gần nhất */
+      foods.forEach(function (f) {
+        if (f.owner) return;
+        var best = null, bd = Infinity;
+        actors.forEach(function (a) {
+          if (a.state === 'eating' || a.state === 'toFood') return;
+          var d = Math.abs(a.x - f.x) + Math.abs(a.y - f.y) * 1.6;
+          if (d < bd) { bd = d; best = a; }
+        });
+        if (best) {
+          f.owner = best; best.food = f; best.state = 'toFood';
+          best.side = best.x <= f.x ? 1 : -1; best.wt = null;
+        }
+      });
+
+      actors.forEach(function (a) {
+        var tx = a.x, ty = a.y, spd = 0, look = null, fixed = false;
+
+        if (a.state === 'eating') {
+          fixed = true;
+          a.eatT += dt;
+          var f = a.food;
+          var done = Math.min(3, Math.floor(a.eatT / BITE_T));
+          if (f && done > f.bites) {
+            f.bites = done;
+            f.ico.style.setProperty('--sc', (1 - done * 0.3).toFixed(2));
+            pop(f.x, f.y - 16 * U, '🍃');
+          }
+          if (a.eatT >= BITE_T * 3) finishEating(a);
+        } else if (a.state === 'happy') {
+          fixed = true;
+          a.happyT -= dt;
+          if (a.happyT <= 0) a.state = 'idle';
+        } else if (a.state === 'toFood' && a.food) {
+          var fd = a.food;
+          var reach = 0.44 * a.w * scaleAt(fd.y);
+          tx = clamp(fd.x - a.side * reach, a.w * 0.3, W - a.w * 0.3);
+          ty = fd.y; spd = RUN; a.face = a.side;
+          if (Math.hypot(tx - a.x, ty - a.y) < 4) {
+            a.state = 'eating'; a.eatT = 0; a.x = tx; a.y = ty;
+          }
+        } else if (cursor.inside) {
+          tx = clamp(cursor.x + a.fdx * U, a.w * 0.4, W - a.w * 0.4);
+          ty = clamp(cursor.y + a.fdy * U, GT, GB);
+          spd = Math.min(RUN, Math.hypot(tx - a.x, ty - a.y) * 3.4);
+          look = cursor.x; a.wt = null;
+        } else if (!reduceMotion) {
+          if (a.wt) {
+            tx = a.wt[0]; ty = a.wt[1]; spd = WALK;
+            if (Math.hypot(tx - a.x, ty - a.y) < 2) { a.wt = null; a.wait = rand(1.5, 4.5); }
+          } else {
+            a.wait -= dt;
+            if (a.wait <= 0) {
+              a.wt = [
+                clamp(a.home[0] * W + rand(-70, 70) * U, a.w * 0.4, W - a.w * 0.4),
+                clamp(a.home[1] * H + rand(-16, 16), GT, GB)
+              ];
+            }
+          }
+        }
+
+        var step = 0, dx = tx - a.x, dy = ty - a.y;
+        if (!fixed) {
+          var dist = Math.hypot(dx, dy);
+          if (dist > 1.2 && spd > 0) {
+            step = Math.min(dist, spd * dt);
+            a.x += dx / dist * step; a.y += dy / dist * step;
+          }
+        }
+        a.vel += (step / dt - a.vel) * Math.min(1, dt * 12);
+
+        if (!fixed && a.state !== 'toFood') {
+          if (a.vel > 8 && Math.abs(dx) > 2.5) a.face = dx > 0 ? 1 : -1;
+          else if (look !== null && a.vel < 8 && Math.abs(look - a.x) > 18) a.face = look >= a.x ? 1 : -1;
+        }
+      });
+
+      /* tránh chồng lên nhau */
+      for (var i = 0; i < actors.length; i++) {
+        for (var j = i + 1; j < actors.length; j++) {
+          var A = actors[i], B = actors[j];
+          var ox = B.x - A.x, oy = B.y - A.y, min = (A.w + B.w) * 0.26;
+          if (Math.abs(oy) < 14 * U && Math.abs(ox) < min) {
+            var push = (min - Math.abs(ox)) * Math.min(1, dt * 6) * 0.5;
+            var dir = ox === 0 ? (Math.random() < 0.5 ? -1 : 1) : (ox > 0 ? 1 : -1);
+            if (A.state === 'idle' || A.state === 'happy') A.x -= dir * push;
+            if (B.state === 'idle' || B.state === 'happy') B.x += dir * push;
+          }
+        }
+      }
+      actors.forEach(function (a) {
+        a.x = clamp(a.x, a.w * 0.3, W - a.w * 0.3);
+        a.y = clamp(a.y, GT, GB);
+      });
+    }
+
+    /* ---------- vẽ ---------- */
+    function render(dt) {
+      actors.forEach(function (a) {
+        a.flip += (a.face - a.flip) * Math.min(1, dt * 18);
+        var s = scaleAt(a.y);
+        var run = clamp(a.vel / RUN, 0, 1);
+        var by = 0, rot = 0;
+
+        if (a.state === 'eating') {
+          rot = 11 + Math.sin(a.eatT * 16) * 2.5; by = 1;
+        } else if (a.state === 'happy') {
+          by = -Math.abs(Math.sin((1 - a.happyT / 0.9) * Math.PI * 2)) * 10 * U;
+        } else if (a.vel > 8) {
+          a.phase += dt * (7 + a.vel * 0.05);
+          var amp = reduceMotion ? 0.4 : 1;
+          by = -Math.abs(Math.sin(a.phase)) * (1.5 + 5 * run) * U * amp;
+          rot = Math.sin(a.phase) * (1.5 + 3 * run) * amp;
+        } else {
+          a.breath += dt * 1.8;
+          by = reduceMotion ? 0 : Math.sin(a.breath) * 0.8;
+        }
+
+        a.bob.style.transform = 'translate3d(0,' + by.toFixed(2) + 'px,0) rotate(' + rot.toFixed(2) + 'deg)';
+        a.el.style.transform = 'translate3d(' + (a.x - a.w / 2).toFixed(1) + 'px,' + (a.y - a.h).toFixed(1) + 'px,0) scale(' +
+          (a.flip * s).toFixed(3) + ',' + s.toFixed(3) + ')';
+        a.el.style.zIndex = Math.round(a.y);
+      });
+
+      ring.style.transform = 'translate(' + cursor.x.toFixed(1) + 'px,' + cursor.y.toFixed(1) + 'px)';
+      ring.classList.toggle('on', cursor.inside);
+    }
+
+    /* ---------- con trỏ ---------- */
+    function setCursor(e) {
+      var r = stage.getBoundingClientRect();
+      cursor.x = e.clientX - r.left;
+      cursor.y = e.clientY - r.top;
+      stage.classList.toggle('over-grass', cursor.y >= H * 0.48);
+    }
+    stage.addEventListener('pointerenter', function (e) { cursor.inside = true; setCursor(e); });
+    stage.addEventListener('pointermove', function (e) { cursor.inside = true; setCursor(e); });
+    stage.addEventListener('pointerleave', function () { cursor.inside = false; stage.classList.remove('over-grass'); });
+    stage.addEventListener('pointercancel', function () { cursor.inside = false; });
+
+    stage.addEventListener('click', function (e) {
+      var r = stage.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      hint.classList.add('quiet');
+      if (y >= H * 0.48) {
+        dropFood(x, y);
+      } else {
+        hint.classList.remove('nudge');
+        void hint.offsetWidth;
+        hint.classList.add('nudge');
+        setTimeout(function () { hint.classList.remove('nudge'); }, 600);
+      }
+    });
+
+    /* ---------- vòng lặp ---------- */
+    var raf = 0, last = 0;
+    function loop(now) {
+      var dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
+      last = now;
+      if (W) { update(dt); render(dt); }
+      raf = requestAnimationFrame(loop);
+    }
+    function start() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); } }
+    function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+
+    measure();
+    if (W) {
+      render(0.016);
+      actors.forEach(function (a) { a.el.classList.add('ready'); });
+    }
+
+    if ('ResizeObserver' in window) new ResizeObserver(measure).observe(stage);
+    else window.addEventListener('resize', measure);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) {
+          if (!W) { measure(); actors.forEach(function (a) { a.el.classList.add('ready'); }); }
+          start();
+        } else { stop(); }
+      }).observe(stage);
+    } else { start(); }
+  })();
+</script>
+
 </body>
 </html>
